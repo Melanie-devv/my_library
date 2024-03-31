@@ -60,6 +60,12 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: _isLoading ? null : _resetPassword,
                 child: const Text('Mot de passe oublié ?'),
               ),
+              TextButton(
+                child: const Text('Vous n\'avez pas encore de compte ? Inscription'),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
+              )
             ],
           ),
         ),
