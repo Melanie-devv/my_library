@@ -60,7 +60,7 @@ class ProfileView extends StatelessWidget {
           );
         },
       ),
-      bottomNavigationBar: const BottomNavigationBarWidget(4),
+      bottomNavigationBar: const BottomNavigationBarWidget(3),
     );
   }
 }

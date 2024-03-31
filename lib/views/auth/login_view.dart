@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../routes.dart';
 
@@ -14,6 +15,27 @@ class _LoginViewState extends State<LoginView> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
+  Future<UserCredential?> _signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      return null;
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    if (userCredential.user != null) {
+      Routes.router.navigateTo(context, '/profile');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +49,10 @@ class _LoginViewState extends State<LoginView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              ElevatedButton(
+                onPressed: _isLoading ? null : _signInWithGoogle,
+                child: _isLoading ? const CircularProgressIndicator() : const Text('Connexion avec Google'),
+              ),
               TextFormField(
                 controller: _emailController,
                 validator: (value) {
@@ -81,10 +107,6 @@ class _LoginViewState extends State<LoginView> {
         _isLoading = true;
       });
       try {
-        final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
         Routes.router.navigateTo(context, '/home');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
