@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../routes.dart';
+
 class RegisterView extends StatefulWidget {
   @override
   _RegisterViewState createState() => _RegisterViewState();
@@ -100,7 +102,7 @@ class _RegisterViewState extends State<RegisterView> {
             );
           }
         }
-        Navigator.pushReplacementNamed(context, '/profile');
+        Routes.router.navigateTo(context, '/profile');
       } catch (e) {
         String message;
         if (e is FirebaseAuthException) {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../routes.dart';
+
 class LoginView extends StatefulWidget {
   @override
   _LoginViewState createState() => _LoginViewState();
@@ -63,7 +65,7 @@ class _LoginViewState extends State<LoginView> {
               TextButton(
                 child: const Text('Vous n\'avez pas encore de compte ? Inscription'),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/register');
+                  Routes.router.navigateTo(context, '/register');
                 },
               )
             ],
@@ -83,7 +85,7 @@ class _LoginViewState extends State<LoginView> {
           email: _emailController.text,
           password: _passwordController.text,
         );
-        Navigator.pushReplacementNamed(context, '/home');
+        Routes.router.navigateTo(context, '/home');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erreur de connexion : $e')),
