@@ -1,3 +1,5 @@
+import 'livre.dart';
+
 class Stock {
   String id;
   String adresse;
@@ -35,5 +37,28 @@ class Stock {
       'description': description,
       'livres': livres,
     };
+  }
+
+  // METHODES
+
+  bool ajouterLivre(Livre livre, int quantite) {
+    if (livres.containsKey(livre.id)) {
+      livres[livre.id] = quantite+1;
+    } else {
+      livres[livre.id] = quantite;
+    }
+    return true;
+  }
+
+  bool retirerLivre(Livre livre, int quantite) {
+    if (livres.containsKey(livre.id) && livres[livre.id]! >= quantite) {
+      livres[livre.id] = quantite - 1;
+      return true;
+    }
+    return false;
+  }
+
+  Map<String, int> getLivres() {
+    return livres;
   }
 }

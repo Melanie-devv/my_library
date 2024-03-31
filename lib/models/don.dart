@@ -24,4 +24,17 @@ class Don {
       'date_donnation': dateDonnation.millisecondsSinceEpoch,
     };
   }
+
+  // METHODES
+
+  // double getMontantTotalParMois(int mois) {
+//     double montantTotal = 0;
+//     for (Don don in dons) {
+//       if (don.dateDonnation.month == mois) {
+//         montantTotal += don.montant;
+//       }
+//     }
+//     return montantTotal;
+//   }
+
 }
