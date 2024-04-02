@@ -7,8 +7,9 @@ class Utilisateur {
   String email;
   DateTime dateNaissance;
   List<Don> dons = [];
+  bool est_admin = false;
 
-  Utilisateur({required this.id, required this.nom, required this.prenom, required this.email, required this.dateNaissance, required this.dons});
+  Utilisateur({required this.id, required this.nom, required this.prenom, required this.email, required this.dateNaissance, required this.dons, this.est_admin = false});
 
   factory Utilisateur.fromMap(Map<String, dynamic> data) {
     final String id = data['id'];
@@ -17,6 +18,7 @@ class Utilisateur {
     final String email = data['email'];
     final DateTime dateNaissance = DateTime.fromMillisecondsSinceEpoch(data['date_naissance']);
     final List<Don> dons = (data['dons'] as List).map((don) => Don.fromMap(don)).toList();
+    final bool est_admin = data['est_admin'];
 
     return Utilisateur(
       id: id,
@@ -25,6 +27,7 @@ class Utilisateur {
       email: email,
       dateNaissance: dateNaissance,
       dons: dons,
+      est_admin: est_admin,
     );
   }
 
@@ -36,6 +39,7 @@ class Utilisateur {
       'email': email,
       'date_naissance': dateNaissance.millisecondsSinceEpoch,
       'dons': dons.map((don) => don.toMap()).toList(),
+      'est_admin': est_admin,
     };
   }
 

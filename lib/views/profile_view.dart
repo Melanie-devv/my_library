@@ -13,7 +13,7 @@ class ProfileView extends StatelessWidget {
         title: const Text('Profil'),
       ),
       body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance.collection('users').doc(userId).snapshots(),
+        stream: FirebaseFirestore.instance.collection('utilisateurs').doc(userId).snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -29,7 +29,17 @@ class ProfileView extends StatelessWidget {
             children: [
               ListTile(
                 title: const Text('Nom'),
-                subtitle: Text('${userData['name']}'),
+                subtitle: Text('${userData['nom']}'),
+              ),
+              const Divider(),
+              ListTile(
+                title: const Text('Prénom'),
+                subtitle: Text('${userData['prenom']}'),
+              ),
+              const Divider(),
+              ListTile(
+                title: const Text('Date de naissance'),
+                subtitle: Text('${userData['date_naissance']}'),
               ),
               const Divider(),
               ListTile(
@@ -37,15 +47,6 @@ class ProfileView extends StatelessWidget {
                 subtitle: Text('${user?.email}'),
               ),
               const Divider(),
-              ListTile(
-                title: const Text('Numéro de téléphone'),
-                subtitle: Text('${userData['phone']}'),
-              ),
-              const Divider(),
-              ListTile(
-                title: const Text('Adresse'),
-                subtitle: Text('${userData['address']}'),
-              ),
               const SizedBox(height: 16.0),
               Center(
                 child: ElevatedButton(
