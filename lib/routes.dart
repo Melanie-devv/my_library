@@ -48,43 +48,43 @@ class Routes {
     router.define(
       '/register',
       handler: _registerHandler,
-      transitionType: TransitionType.inFromBottom,
+      transitionType: TransitionType.fadeIn,
     );
 
     router.define(
       '/login',
       handler: _loginHandler,
-      transitionType: TransitionType.inFromBottom,
+      transitionType: TransitionType.fadeIn,
     );
 
     router.define(
       '/forgot-password',
       handler: _forgotPasswordHandler,
-      transitionType: TransitionType.inFromBottom,
+      transitionType: TransitionType.fadeIn,
     );
 
     router.define(
       '/profile',
       handler: _profileHandler,
-      transitionType: TransitionType.inFromBottom,
+      transitionType: TransitionType.fadeIn,
     );
 
     router.define(
       '/home',
       handler: _homeHandler,
-      transitionType: TransitionType.inFromBottom,
+      transitionType: TransitionType.fadeIn,
     );
 
     router.define(
       '/livre/:id',
       handler: _livreDetailHandler,
-      transitionType: TransitionType.inFromRight,
+      transitionType: TransitionType.fadeIn,
     );
 
     router.define(
       '/auteur/:id',
       handler: _auteurDetailHandler,
-      transitionType: TransitionType.inFromRight,
+      transitionType: TransitionType.fadeIn,
     );
   }
 }
