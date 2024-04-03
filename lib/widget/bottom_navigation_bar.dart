@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../routes.dart';
+
 class BottomNavigationBarWidget extends StatelessWidget {
   final int indexSelected;
 
@@ -18,11 +20,11 @@ class BottomNavigationBarWidget extends StatelessWidget {
           label: '',
         ),
         BottomNavigationBarItem(
-          icon: buildIcon(Icons.all_inclusive_rounded, context, 1, 'Librairie'),
+          icon: buildIcon(Icons.menu_book_rounded, context, 1, 'Mes Livres'),
           label: '',
         ),
         BottomNavigationBarItem(
-          icon: buildIcon(Icons.shop_two_outlined, context, 2, 'Mes Livres'),
+          icon: buildIcon(Icons.handshake_rounded, context, 2, 'Soutenez-nous'),
           label: '',
         ),
         BottomNavigationBarItem(
@@ -41,16 +43,16 @@ class BottomNavigationBarWidget extends StatelessWidget {
             page = '/home';
             break;
           case 1:
-            page = '/my_showrooms';
+            page = '/home';
             break;
           case 2:
-            page = '/flashtaps';
+            page = '/home';
             break;
           case 3:
             page = '/profile';
             break;
         }
-        Navigator.pushNamed(context, page);
+        Routes.router.navigateTo(context, page);
       },
     );
   }

@@ -6,7 +6,13 @@ class LivreServices {
 
   Future<List<Livre>> getLivres() async {
     final QuerySnapshot snapshot = await _livres.get();
-    return snapshot.docs.map((doc) => Livre.fromMap(doc.data() as Map<String, dynamic>)).toList();
+    List<Livre> livres = snapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      Livre livre = Livre.fromMap(data);
+      return livre;
+    }).toList();
+    return livres;
   }
 
   //region CRUD
@@ -43,5 +49,27 @@ class LivreServices {
 
   //region Autres méthodes
 
-  //endregion
+  Stream<QuerySnapshot> searchLivres(String query) {
+    return _livres
+        .where('titre', isGreaterThanOrEqualTo: query)
+        .where('titre', isLessThan: query + 'z')
+        .snapshots();
+  }
+
+  Future<List<Livre>> getLivresByAuteur(String auteurId) async {
+    final QuerySnapshot snapshot = await _livres.where('auteur_id', isEqualTo: auteurId).get();
+    return snapshot.docs.map((doc) => Livre.fromMap(doc.data() as Map<String, dynamic>)).toList();
+  }
+
+  Future<Livre> getLivreById(String livreId) async {
+    final DocumentSnapshot doc = await FirebaseFirestore.instance.collection('livres').doc(livreId).get();
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+      final livre = Livre.fromMap(data);
+      return livre;
+    } else {
+      throw Exception('Livre non trouvé');
+    }
+  }
+//endregion
 }

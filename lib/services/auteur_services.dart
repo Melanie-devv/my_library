@@ -40,5 +40,13 @@ class AuteurServices {
 
   //region Autres méthodes
 
+  Future<Auteur> getAuteurById(String id) async {
+    final DocumentSnapshot doc = await _auteurs.doc(id).get();
+    if (doc.exists) {
+      return Auteur.fromMap(doc.data() as Map<String, dynamic>);
+    } else {
+      throw Exception('Auteur non trouvé');
+    }
+  }
   //endregion
 }
