@@ -1,8 +1,10 @@
 import 'package:fluro/fluro.dart';
+import 'package:my_library/views/auteur_detail_view.dart';
 import 'package:my_library/views/auth/forgot_password_view.dart';
 import 'package:my_library/views/auth/login_view.dart';
 import 'package:my_library/views/auth/register_view.dart';
 import 'package:my_library/views/home_view.dart';
+import 'package:my_library/views/livre_detail_view.dart';
 import 'package:my_library/views/profile_view.dart';
 
 class Routes {
@@ -25,6 +27,19 @@ class Routes {
   );
   static final Handler _homeHandler = Handler(
     handlerFunc: (context, params) => HomeView(),
+  );
+  static final Handler _livreDetailHandler = Handler(
+    handlerFunc: (context, params) {
+      final String livreId = params['id']![0];
+      return LivreDetailView(livreId: livreId);
+    },
+  );
+
+  static final Handler _auteurDetailHandler = Handler(
+    handlerFunc: (context, params) {
+      final String auteurId = params['id']![0];
+      return AuteurDetailView(auteurId: auteurId);
+    },
   );
 
 
@@ -58,6 +73,18 @@ class Routes {
       '/home',
       handler: _homeHandler,
       transitionType: TransitionType.inFromBottom,
+    );
+
+    router.define(
+      '/livre/:id',
+      handler: _livreDetailHandler,
+      transitionType: TransitionType.inFromRight,
+    );
+
+    router.define(
+      '/auteur/:id',
+      handler: _auteurDetailHandler,
+      transitionType: TransitionType.inFromRight,
     );
   }
 }
