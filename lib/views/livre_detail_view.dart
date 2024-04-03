@@ -5,6 +5,17 @@ import 'package:my_library/services/livre_services.dart';
 import '../models/auteur.dart';
 import '../services/auteur_services.dart';
 
+extension DateFormatter on DateTime {
+  String formatDate() {
+    final List<String> months = [
+      'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+      'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+    ];
+
+    return '${day} ${months[month - 1]} $year';
+  }
+}
+
 class LivreDetailView extends StatelessWidget {
   final String livreId;
 
@@ -24,160 +35,192 @@ class LivreDetailView extends StatelessWidget {
             appBar: AppBar(
               title: Text(livre.titre),
             ),
-            body: Stack(
-              children: <Widget>[
-                Image.network(
-                  livre.couverture,
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: <Color>[
-                        Colors.white.withAlpha(100),
-                        Colors.white70,
-                        Colors.white,
-                      ],
-                    ),
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Image.network(
+                    livre.couverture,
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                    fit: BoxFit.cover,
                   ),
-                ),
-                SingleChildScrollView(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 280),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                livre.titre,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              ListTile(
-                                leading: Icon(Icons.person, color: Colors.black),
-                                title: FutureBuilder<Auteur>(
-                                  future: auteurServices.getAuteurById(livre.auteurId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      final Auteur auteur = snapshot.data!;
-                                      return Text(
-                                        'Auteur : ${auteur.nom} ${auteur.prenom}',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 20,
-                                        ),
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return Text(
-                                        'Erreur lors de la récupération de l\'auteur : ${snapshot.error}',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 20,
-                                        ),
-                                      );
-                                    }
-                                    return CircularProgressIndicator();
-                                  },
-                                ),
-                              ),
-                              ListTile(
-                                leading: Icon(
-                                    Icons.category, color: Colors.black),
-                                title: Text(
-                                  'Catégorie : ${livre.categorie}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              ListTile(
-                                leading: Icon(Icons.pages, color: Colors.black),
-                                title: Text(
-                                  'Nombre de pages : ${livre.nombreDePages}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              ListTile(
-                                leading: Icon(
-                                    Icons.calendar_today, color: Colors.black),
-                                title: Text(
-                                  'Date de publication : ${livre.datePublication
-                                      .toString()}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              ListTile(
-                                leading: Icon(
-                                    Icons.business, color: Colors.black),
-                                title: Text(
-                                  'Editeur : ${livre.editeur}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              ListTile(
-                                title: Text(
-                                  'Résumé : ${livre.resume}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                  ),
-                                  textAlign: TextAlign.justify,
-                                ),
-                              ),
-                            ],
+                        Center(
+                          child: Text(
+                            livre.titre,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
+                        const SizedBox(height: 16),
+                        FutureBuilder<Auteur>(
+                          future: auteurServices.getAuteurById(livre.auteurId),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final Auteur auteur = snapshot.data!;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    'De ${auteur.prenom} ${auteur.nom}',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Publié le ${livre.datePublication.formatDate()}',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Catégorie : ${livre.categorie}',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text(
+                                'Erreur lors de la récupération de l\'auteur : ${snapshot.error}',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                ),
+                              );
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          '${livre.resume}',
+                          style: const TextStyle(
+                            color: Colors.black54,
+                            fontSize: 15,
+                          ),
+                          textAlign: TextAlign.justify,
+                        ),
+                        const SizedBox(height: 16),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            IconButton(
-                              icon: Icon(
-                                  Icons.favorite_border, color: Colors.black),
+                            ElevatedButton(
                               onPressed: () {
-                                // Ajoutez votre logique pour marquer le livre comme favori
+                                // Ajoutez votre logique pour télécharger le livre
                               },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.62,
+                                height: 50,
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  'Lire le livre',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.share, color: Colors.black),
+                            ElevatedButton(
                               onPressed: () {
-                                // Ajoutez votre logique pour partager le livre
+                                // Ajoutez votre logique pour télécharger le livre
                               },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.05,
+                                height: 50,
+                                alignment: Alignment.center,
+                                child: const Icon(Icons.download, color: Colors.white),
+                              ),
                             ),
                           ],
                         ),
+                        const SizedBox(height: 26),
+                        const Text(
+                          'D\'autres livres du même auteur',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        FutureBuilder<List<Livre>>(
+                          future: auteurServices.getAuteurById(livre.auteurId).then((auteur) => livreServices.getLivresByAuteur(auteur.id)),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final List<Livre> livres = snapshot.data!;
+                              return SizedBox(
+                                height: 130,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: livres.length,
+                                  itemBuilder: (context, index) {
+                                    final Livre livre = livres[index];
+                                    return Container(
+                                      width: 120,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Image.network(
+                                            livre.couverture,
+                                            width: 100,
+                                            height: 130,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text(
+                                'Erreur lors de la récupération des livres : ${snapshot.error}',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                ),
+                              );
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         } else if (snapshot.hasError) {
           return Text(
               'Erreur lors de la récupération du livre : ${snapshot.error}');
         }
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       },
     );
   }

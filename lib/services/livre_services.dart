@@ -58,7 +58,11 @@ class LivreServices {
 
   Future<List<Livre>> getLivresByAuteur(String auteurId) async {
     final QuerySnapshot snapshot = await _livres.where('auteur_id', isEqualTo: auteurId).get();
-    return snapshot.docs.map((doc) => Livre.fromMap(doc.data() as Map<String, dynamic>)).toList();
+    return snapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      return Livre.fromMap(data);
+    }).toList();
   }
 
   Future<Livre> getLivreById(String livreId) async {
