@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Auteur {
   String id;
   String nom;
@@ -12,7 +14,7 @@ class Auteur {
     final String id = data['id'];
     final String nom = data['nom'];
     final String prenom = data['prenom'];
-    final DateTime dateNaissance = DateTime.fromMillisecondsSinceEpoch(data['date_naissance']);
+    final DateTime dateNaissance = (data['date_naissance'] as Timestamp).toDate();
     final String biographie = data['biographie'];
     final String image = data['image'];
 

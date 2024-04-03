@@ -65,6 +65,7 @@ class LivreServices {
     final DocumentSnapshot doc = await FirebaseFirestore.instance.collection('livres').doc(livreId).get();
     if (doc.exists) {
       final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
       final livre = Livre.fromMap(data);
       return livre;
     } else {

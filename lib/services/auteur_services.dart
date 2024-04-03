@@ -6,7 +6,13 @@ class AuteurServices {
 
   Future<List<Auteur>> getAuteurs() async {
     final QuerySnapshot snapshot = await _auteurs.get();
-    return snapshot.docs.map((doc) => Auteur.fromMap(doc.data() as Map<String, dynamic>)).toList();
+    List<Auteur> auteurs = snapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      Auteur auteur = Auteur.fromMap(data);
+      return auteur;
+    }).toList();
+    return auteurs;
   }
 
   //region CRUD
@@ -43,7 +49,9 @@ class AuteurServices {
   Future<Auteur> getAuteurById(String id) async {
     final DocumentSnapshot doc = await _auteurs.doc(id).get();
     if (doc.exists) {
-      return Auteur.fromMap(doc.data() as Map<String, dynamic>);
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      return Auteur.fromMap(data);
     } else {
       throw Exception('Auteur non trouvé');
     }
