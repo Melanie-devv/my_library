@@ -5,6 +5,7 @@ import 'package:my_library/views/auth/login_view.dart';
 import 'package:my_library/views/auth/register_view.dart';
 import 'package:my_library/views/home_view.dart';
 import 'package:my_library/views/livre_detail_view.dart';
+import 'package:my_library/views/pdf_view.dart';
 import 'package:my_library/views/profile_view.dart';
 
 class Routes {
@@ -39,6 +40,13 @@ class Routes {
     handlerFunc: (context, params) {
       final String auteurId = params['id']![0];
       return AuteurDetailView(auteurId: auteurId);
+    },
+  );
+
+  static final Handler _pdfViewHandler = Handler(
+    handlerFunc: (context, params) {
+      final String url = params['url']![0];
+      return PdfView(url: url);
     },
   );
 
@@ -84,6 +92,12 @@ class Routes {
     router.define(
       '/auteur/:id',
       handler: _auteurDetailHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+
+    router.define(
+      '/pdf-view/:url',
+      handler: _pdfViewHandler,
       transitionType: TransitionType.fadeIn,
     );
   }

@@ -1,8 +1,13 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:my_library/models/livre.dart';
 
 class LivreServices {
   final CollectionReference _livres = FirebaseFirestore.instance.collection('livres');
+  final storageRef = FirebaseStorage.instance.ref();
 
   Future<List<Livre>> getLivres() async {
     final QuerySnapshot snapshot = await _livres.get();
@@ -66,15 +71,41 @@ class LivreServices {
   }
 
   Future<Livre> getLivreById(String livreId) async {
-    final DocumentSnapshot doc = await FirebaseFirestore.instance.collection('livres').doc(livreId).get();
-    if (doc.exists) {
-      final data = doc.data() as Map<String, dynamic>;
-      data['id'] = doc.id;
-      final livre = Livre.fromMap(data);
-      return livre;
-    } else {
-      throw Exception('Livre non trouvé');
+    final doc = await _livres.doc(livreId).get();
+    final data = doc.data() as Map<String, dynamic>;
+    final pdfUrl = await getPdfUrl(livreId);
+    return Livre(
+      id: livreId,
+      titre: data['titre'],
+      auteurId: data['auteur_id'],
+      categorie: data['categorie'],
+      couverture: data['couverture'],
+      resume: data['resume'],
+      nombreDePages: data['nombre_de_pages'],
+      editeur: data['editeur'],
+      datePublication: data['date_publication'].toDate(),
+      pdfUrl: pdfUrl,
+    );
+  }
+
+  Future<String> getPdfUrl(String livreId) async {
+    final pdfRef = storageRef.child('pdf/$livreId/livre.pdf');
+    final url = await pdfRef.getDownloadURL();
+    return url;
+  }
+
+  Future<bool> downloadPdf(String livreId) async {
+    try {
+      final pdfUrl = await getPdfUrl(livreId);
+      final response = await http.get(Uri.parse(pdfUrl));
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$livreId.pdf');
+      await file.writeAsBytes(response.bodyBytes);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
+
 //endregion
 }

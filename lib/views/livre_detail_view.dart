@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_library/models/livre.dart';
 import 'package:my_library/services/livre_services.dart';
+import 'package:my_library/views/pdf_view.dart';
 import 'package:my_library/widget/bottom_navigation_bar.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../models/auteur.dart';
 import '../routes.dart';
@@ -104,6 +106,20 @@ class LivreDetailView extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
+                                    'Catégorie : ${livre.categorie}',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Edition ${livre.editeur}',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  Text(
                                     'Publié le ${livre.datePublication.formatDate()}',
                                     style: const TextStyle(
                                       color: Colors.black,
@@ -111,7 +127,7 @@ class LivreDetailView extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    'Catégorie : ${livre.categorie}',
+                                    'Nombre de pages : ${livre.nombreDePages}',
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
@@ -145,8 +161,16 @@ class LivreDetailView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             ElevatedButton(
-                              onPressed: () {
-                                // Ajoutez votre logique pour télécharger le livre
+                              onPressed: () async {
+                                final String pdfUrl = await LivreServices().getPdfUrl(livre.id);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PdfView(
+                                      url: pdfUrl,
+                                    ),
+                                  ),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black,
@@ -168,8 +192,22 @@ class LivreDetailView extends StatelessWidget {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () {
-                                // Ajoutez votre logique pour télécharger le livre
+                              onPressed: () async {
+                                final String livreId = livre.id;
+                                final bool filePath = await LivreServices().downloadPdf(livreId);
+                                if (filePath) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Le livre a été téléchargé avec succès'),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Erreur lors du téléchargement du livre'),
+                                    ),
+                                  );
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black,

@@ -10,8 +10,9 @@ class Livre {
   int nombreDePages;
   DateTime datePublication;
   String editeur;
+  String pdfUrl;
 
-  Livre({required this.id, required this.auteurId, required this.titre, required this.categorie, required this.couverture, required this.resume, required this.nombreDePages, required this.datePublication, required this.editeur});
+  Livre({required this.id, required this.auteurId, required this.titre, required this.categorie, required this.couverture, required this.resume, required this.nombreDePages, required this.datePublication, required this.editeur, this.pdfUrl = ''});
 
   factory Livre.fromMap(Map<String, dynamic> data) {
     final String id = data['id'];
@@ -34,6 +35,7 @@ class Livre {
       nombreDePages: nombreDePages,
       datePublication: datePublication,
       editeur: editeur,
+      pdfUrl: '',
     );
   }
 
