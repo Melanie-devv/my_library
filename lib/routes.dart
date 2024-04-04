@@ -3,6 +3,7 @@ import 'package:my_library/views/auteur_detail_view.dart';
 import 'package:my_library/views/auth/forgot_password_view.dart';
 import 'package:my_library/views/auth/login_view.dart';
 import 'package:my_library/views/auth/register_view.dart';
+import 'package:my_library/views/donnation_view.dart';
 import 'package:my_library/views/home_view.dart';
 import 'package:my_library/views/livre_detail_view.dart';
 import 'package:my_library/views/pdf_view.dart';
@@ -48,6 +49,10 @@ class Routes {
       final String url = params['url']![0];
       return PdfView(url: url);
     },
+  );
+
+  static final Handler _donnationHandler = Handler(
+    handlerFunc: (context, params) => DonnationView(),
   );
 
 
@@ -98,6 +103,12 @@ class Routes {
     router.define(
       '/pdf-view/:url',
       handler: _pdfViewHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+
+    router.define(
+      '/donnation',
+      handler: _donnationHandler,
       transitionType: TransitionType.fadeIn,
     );
   }

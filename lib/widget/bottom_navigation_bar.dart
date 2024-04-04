@@ -20,7 +20,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
           label: '',
         ),
         BottomNavigationBarItem(
-          icon: buildIcon(Icons.menu_book_rounded, context, 1, 'Mes Livres'),
+          icon: buildIcon(Icons.menu_book_rounded, context, 1, 'Favoris'),
           label: '',
         ),
         BottomNavigationBarItem(
@@ -46,7 +46,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
             page = '/login';
             break;
           case 2:
-            page = '/login';
+            page = '/donnation';
             break;
           case 3:
             page = '/profile';

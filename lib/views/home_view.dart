@@ -56,7 +56,9 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ma bibliothèque'),
+        automaticallyImplyLeading: false,
+        title: const Text('My Library'),
+        centerTitle: true,
       ),
       body: Column(
         children: [
