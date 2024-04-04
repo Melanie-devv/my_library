@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_library/models/auteur.dart';
 
+import '../models/livre.dart';
+
 class AuteurServices {
   final CollectionReference _auteurs = FirebaseFirestore.instance.collection('auteurs');
 
@@ -56,5 +58,29 @@ class AuteurServices {
       throw Exception('Auteur non trouvé');
     }
   }
-  //endregion
+
+  Future<int> getNombreLivresParAuteur(String id) async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('livres')
+        .where('auteurId', isEqualTo: id)
+        .get();
+    return result.size;
+  }
+
+  Future<int> getNombrePagesEcritesParAuteur(String id) async {
+    int nombrePages = 0;
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('livres')
+        .where('auteurId', isEqualTo: id)
+        .get();
+    for (final QueryDocumentSnapshot doc in result.docs) {
+      final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      final Livre livre = Livre.fromMap(data);
+      nombrePages += livre.nombreDePages;
+    }
+    return nombrePages;
+  }
+
+//endregion
 }
