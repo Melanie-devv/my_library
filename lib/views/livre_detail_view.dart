@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:my_library/models/livre.dart';
 import 'package:my_library/services/livre_services.dart';
+import 'package:my_library/widget/bottom_navigation_bar.dart';
 
 import '../models/auteur.dart';
+import '../routes.dart';
 import '../services/auteur_services.dart';
+import 'auteur_detail_view.dart';
 
 extension DateFormatter on DateTime {
   String formatDate() {
@@ -42,7 +45,7 @@ class LivreDetailView extends StatelessWidget {
                   Image.network(
                     livre.couverture,
                     width: MediaQuery.of(context).size.width,
-                    height: 200,
+                    height: MediaQuery.of(context).size.height * 0.3,
                     fit: BoxFit.cover,
                   ),
                   Padding(
@@ -55,7 +58,7 @@ class LivreDetailView extends StatelessWidget {
                             livre.titre,
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 24,
+                              fontSize: 28,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -69,11 +72,35 @@ class LivreDetailView extends StatelessWidget {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text(
-                                    'De ${auteur.prenom} ${auteur.nom}',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => AuteurDetailView(auteurId: auteur.id),
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        const Text(
+                                          'De ',
+                                          style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${auteur.prenom} ${auteur.nom}',
+                                          style: const TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue,
+                                            decoration: TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   Text(
@@ -101,7 +128,7 @@ class LivreDetailView extends StatelessWidget {
                                 ),
                               );
                             }
-                            return const CircularProgressIndicator();
+                            return const SizedBox();
                           },
                         ),
                         const SizedBox(height: 16),
@@ -181,17 +208,22 @@ class LivreDetailView extends StatelessWidget {
                                   itemCount: livres.length,
                                   itemBuilder: (context, index) {
                                     final Livre livre = livres[index];
-                                    return Container(
-                                      width: 120,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Image.network(
-                                            livre.couverture,
-                                            width: 100,
-                                            height: 130,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ],
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Routes.router.navigateTo(context, '/livre/${livre.id}');
+                                      },
+                                      child: Container(
+                                        width: 120,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Image.network(
+                                              livre.couverture,
+                                              width: 100,
+                                              height: 130,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     );
                                   },
@@ -215,12 +247,13 @@ class LivreDetailView extends StatelessWidget {
                 ],
               ),
             ),
+            bottomNavigationBar: const BottomNavigationBarWidget(1),
           );
         } else if (snapshot.hasError) {
           return Text(
               'Erreur lors de la récupération du livre : ${snapshot.error}');
         }
-        return const CircularProgressIndicator();
+        return const SizedBox();
       },
     );
   }

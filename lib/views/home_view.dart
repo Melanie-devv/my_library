@@ -39,9 +39,11 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _getAuteurs() async {
     try {
-      _auteurs = await _auteurServices.getAuteurs();
+      final List<Auteur> auteurs = await _auteurServices.getAuteurs();
+      setState(() {
+        _auteurs = auteurs;
+      });
     } catch (e) {
-      print('Erreur lors de la récupération des auteurs : $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Erreur lors de la récupération des auteurs'),
@@ -105,6 +107,11 @@ class _HomeViewState extends State<HomeView> {
                     itemCount: livres.length,
                     itemBuilder: (context, index) {
                       final Livre livre = livres[index];
+                      if (_auteurs.isEmpty) {
+                        return const Center(
+                          child: SizedBox(),
+                        );
+                      }
                       final Auteur auteur = _auteurs.firstWhere((a) => a.id == livre.auteurId);
                       return GestureDetector(
                         onTap: () {
