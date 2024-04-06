@@ -28,7 +28,7 @@ class StockServices {
   //region Validation
 
   void _validateStock(Stock stock) {
-    if (stock.adresse.isEmpty || stock.ville.isEmpty || stock.codePostal.isEmpty || stock.description.isEmpty || stock.livres.isEmpty) {
+    if (stock.adresse.isEmpty || stock.ville.isEmpty || stock.codePostal.isEmpty || stock.description.isEmpty) {
       throw Exception('Tous les champs sont obligatoires pour un stock');
     }
   }
@@ -36,30 +36,49 @@ class StockServices {
 
   //region Autres méthodes
 
-  Future<int> GetQuantiteEnStock(String livreId) async {
+  Future<List<String>> getLivres(String stockId) async {
+    DocumentSnapshot snapshot = await _stocks.doc(stockId).get();
+    if (snapshot.exists) {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      List<String> livres = data['livres'].keys.toList();
+      return livres;
+    } else {
+      throw Exception('Stock non trouvé');
+    }
+  }
+
+
+  Future<int> getQuantiteEnStock(String livreId) async {
     int quantiteTotal = 0;
     QuerySnapshot querySnapshot = await _stocks.get();
-    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-      Stock stock = Stock.fromMap(documentSnapshot.data() as Map<String, dynamic>);
-      if (stock.livres.containsKey(livreId)) {
-        quantiteTotal += stock.livres[livreId] ?? 0;
-      }
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      CollectionReference stockLivresCollection = FirebaseFirestore.instance.collection('stocks').doc(doc.id).collection('livres');
+      DocumentSnapshot<Object?> documentSnapshot = await stockLivresCollection.doc(livreId).get();
+      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+      int quantite = (data['quantite']);
+      quantiteTotal += quantite;
     }
     return quantiteTotal;
   }
 
+
   Future<List<Stock>> getStockContenantLivre(String livreid) async {
     List<Stock> stocksContenantLivre = [];
-    List<Stock> stocks = await getStocks();
-
-    for (Stock stock in stocks) {
-      if (stock.livres.containsKey(livreid) && stock.livres[livreid]! > 0) {
-        stocksContenantLivre.add(stock);
-      }
+    QuerySnapshot querySnapshot = await _stocks.where('livres.$livreid', isGreaterThan: 0).get();
+    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      Stock stock = Stock(
+        id: doc.id,
+        adresse: data['adresse'],
+        ville: data['ville'],
+        codePostal: data['code_postal'],
+        description: data['description'],
+      );
+      stocksContenantLivre.add(stock);
     }
-
     return stocksContenantLivre;
   }
+
 
   Future<void> ajouterLivre(String stockId, String livreId, int quantite) async {
     DocumentReference stockRef = _stocks.doc(stockId);

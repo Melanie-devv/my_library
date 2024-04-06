@@ -7,6 +7,7 @@ import 'package:my_library/widget/bottom_navigation_bar.dart';
 import '../models/auteur.dart';
 import '../routes.dart';
 import '../services/auteur_services.dart';
+import '../services/stock_services.dart';
 import 'auteur_detail_view.dart';
 
 extension DateFormatter on DateTime {
@@ -29,6 +30,8 @@ class LivreDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final LivreServices livreServices = LivreServices();
     final AuteurServices auteurServices = AuteurServices();
+    final StockServices stockServices = StockServices();
+
 
     return FutureBuilder<Livre>(
       future: livreServices.getLivreById(livreId),
@@ -132,6 +135,34 @@ class LivreDetailView extends StatelessWidget {
                                       fontSize: 18,
                                     ),
                                   ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: FutureBuilder<int>(
+                                      future: stockServices.getQuantiteEnStock(livre.id),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          final int quantiteEnStock = snapshot.data!;
+                                          return Text(
+                                            'Quantité en stock : $quantiteEnStock',
+                                            style: const TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 18,
+                                            ),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return const Text(
+                                            'En rupture de stock !',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 18,
+                                            ),
+                                          );
+                                        }
+                                        return const SizedBox();
+                                      },
+                                    ),
+                                  ),
+
                                 ],
                               );
                             } else if (snapshot.hasError) {
