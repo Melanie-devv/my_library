@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+import 'package:my_library/models/utilisateur.dart';
+import 'package:my_library/services/utilisateur_services.dart';
+import 'package:my_library/widget/bottom_navigation_bar.dart';
+
+import '../routes.dart';
+
+class ProfilView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final UtilisateurServices utilisateurService = UtilisateurServices();
+
+    return FutureBuilder<String>(
+      future: utilisateurService.getCurrentUid().then((value) => value ?? ''),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return const Text('Erreur lors de la récupération de l\'ID utilisateur');
+        } else {
+          final String currentUid = snapshot.data!;
+          return FutureBuilder<Utilisateur?>(
+            future: utilisateurService.getUserById(currentUid),
+            builder: (BuildContext context, AsyncSnapshot<Utilisateur?> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return const Text('Erreur lors de la récupération de l\'utilisateur');
+              } else {
+                final Utilisateur? user = snapshot.data;
+                if (user == null) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Profil'),
+                    ),
+                    body: const Center(
+                      child: Text('Utilisateur non trouvé'),
+                    ),
+                  );
+                }
+
+                return Scaffold(
+                  appBar: AppBar(
+                    title: const Text('Profil'),
+                  ),
+                  body: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Bienvenue sur MyLibrary',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        '${user.prenom} ${user.nom}',
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                      const SizedBox(height: 32),
+                      ListTile(
+                        title: const Text('Mes informations'),
+                        trailing: const Icon(Icons.arrow_forward_ios),
+                        onTap: () {
+                          Routes.router.navigateTo(context, '/profil-informations');
+                        },
+                      ),
+                      const Divider(),
+                      ListTile(
+                        title: const Text('Mes favoris'),
+                        trailing: const Icon(Icons.arrow_forward_ios),
+                        onTap: () {
+                          // TODO: Ajouter la redirection vers la page de favoris
+                        },
+                      ),
+                      const Divider(),
+                      ListTile(
+                        title: const Text('Donations'),
+                        trailing: const Icon(Icons.arrow_forward_ios),
+                        onTap: () {
+                          Routes.router.navigateTo(context, '/profil-donations');
+                        },
+                      ),
+                      const Divider(),
+                      ListTile(
+                        title: const Text('Réservations'),
+                        trailing: const Icon(Icons.arrow_forward_ios),
+                        onTap: () {
+                          // TODO: Ajouter la redirection vers la page de reservations
+                        },
+                      ),
+                      const Divider(),
+                      const SizedBox(height: 60),
+                      ElevatedButton(
+                        onPressed: () {
+                          Routes.router.navigateTo(context, '/donation');
+                        },
+                        child: Text('En savoir plus'),
+                      ),
+                    ],
+                  ),
+                  bottomNavigationBar: const BottomNavigationBarWidget(3),
+                );
+              }
+            },
+          );
+        }
+      },
+    );
+  }
+}

@@ -48,7 +48,6 @@ class _ProfilInformationsViewState extends State<ProfilInformationsView> {
         prenom: _prenomController.text,
         email: _emailController.text,
         dateNaissance: Timestamp.fromDate(_dateNaissance),
-        dons: [],
       );
       await UtilisateurServices().updateUtilisateur(utilisateur);
       setState(() {
