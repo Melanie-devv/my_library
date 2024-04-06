@@ -49,7 +49,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
             page = '/donnation';
             break;
           case 3:
-            page = '/profile';
+            page = '/profil';
             break;
         }
         Routes.router.navigateTo(context, page);

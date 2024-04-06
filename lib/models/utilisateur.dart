@@ -16,7 +16,7 @@ class Utilisateur {
     final String nom = data['nom'];
     final String prenom = data['prenom'];
     final String email = data['email'];
-    final DateTime dateNaissance = DateTime.fromMillisecondsSinceEpoch(data['date_naissance']);
+    final DateTime dateNaissance = DateTime.parse(data['date_naissance']);
     final List<Don> dons = (data['dons'] as List).map((don) => Don.fromMap(don)).toList();
     final bool est_admin = data['est_admin'];
 

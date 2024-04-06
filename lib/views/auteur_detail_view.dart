@@ -70,7 +70,7 @@ class AuteurDetailView extends StatelessWidget {
                                   } else if (snapshot.hasError) {
                                     return Text('Erreur : ${snapshot.error}');
                                   }
-                                  return const CircularProgressIndicator();
+                                  return const SizedBox.shrink();
                                 },
                               ),
                               const SizedBox(height: 16.0),
@@ -83,7 +83,7 @@ class AuteurDetailView extends StatelessWidget {
                                   } else if (snapshot.hasError) {
                                     return Text('Erreur : ${snapshot.error}');
                                   }
-                                  return const CircularProgressIndicator();
+                                  return const SizedBox.shrink();
                                 },
                               ),
                             ],

@@ -54,5 +54,30 @@ class DonServices {
 
   //region Autres méthodes
 
-  //endregion
+  Future<double> getMontantTotalParMois(int mois, int annee) async {
+    final QuerySnapshot snapshot = await _dons
+        .where('dateDonnation.month', isEqualTo: mois)
+        .where('dateDonnation.year', isEqualTo: annee)
+        .get();
+
+    double montantTotal = 0;
+    for (final DocumentSnapshot doc in snapshot.docs) {
+      final Don don = Don.fromMap(doc.data() as Map<String, dynamic>);
+      montantTotal += don.montant;
+    }
+
+    return montantTotal;
+  }
+
+  Future<List<Don>> getDonsByUser(String userId) async {
+    final QuerySnapshot snapshot = await _dons
+        .where('utilisateur', isEqualTo: userId)
+        .orderBy('dateDonnation', descending: true)
+        .get();
+
+    return snapshot.docs.map((doc) => Don.fromMap(doc.data() as Map<String, dynamic>)).toList();
+  }
+
+
+//endregion
 }

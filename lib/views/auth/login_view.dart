@@ -32,7 +32,7 @@ class _LoginViewState extends State<LoginView> {
     final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
     if (userCredential.user != null) {
-      Routes.router.navigateTo(context, '/profile');
+      Routes.router.navigateTo(context, '/profil');
     }
   }
 

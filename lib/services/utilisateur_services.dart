@@ -1,5 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_library/models/utilisateur.dart';
+
+import '../models/don.dart';
+import 'don_services.dart';
 
 class UtilisateurServices {
   final CollectionReference _utilisateurs = FirebaseFirestore.instance.collection('utilisateurs');
@@ -11,10 +15,14 @@ class UtilisateurServices {
 
   //region CRUD
 
-  Future<void> addUtilisateur(Utilisateur utilisateur) async {
-    _validateUtilisateur(utilisateur);
-    await _utilisateurs.add(utilisateur.toMap());
+  Future<void> addUtilisateur (Utilisateur user) async {
+    try {
+      await _utilisateurs.doc().set(user.toMap());
+    } catch (e) {
+      throw Exception('Erreur lors de l\'ajout de l\'utilisateur : $e');
+    }
   }
+
 
   Future<void> updateUtilisateur(Utilisateur utilisateur) async {
     _validateUtilisateur(utilisateur);
@@ -57,5 +65,30 @@ class UtilisateurServices {
 
   //region Autres méthodes
 
+  Future<String?> getCurrentUid() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    return user?.uid;
+  }
+
+  Future<Utilisateur?> getUserById(String userId) async {
+    final DocumentSnapshot doc = await _utilisateurs.doc(userId).get();
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      return Utilisateur.fromMap(data);
+    } else {
+      return null;
+    }
+  }
+
+  Future<double> getMontantTotalDons(String userId) async {
+    final List<Don> dons = await DonServices().getDonsByUser(userId);
+    double montantTotal = 0.0;
+    for (final Don don in dons) {
+      montantTotal += don.montant;
+    }
+    return montantTotal;
+  }
   //endregion
 }

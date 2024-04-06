@@ -1,18 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_library/models/utilisateur.dart';
+import 'package:my_library/services/utilisateur_services.dart';
+import 'package:intl/intl.dart';
 
-class UserFormPage extends StatefulWidget {
+import '../../routes.dart';
+
+class SetupView extends StatefulWidget {
   @override
-  _UserFormPageState createState() => _UserFormPageState();
+  _SetupViewState createState() => _SetupViewState();
 }
 
-class _UserFormPageState extends State<UserFormPage> {
+class _SetupViewState extends State<SetupView> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _addressController = TextEditingController();
+  final _prenomController = TextEditingController();
+  final _dateNaissanceController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +45,19 @@ class _UserFormPageState extends State<UserFormPage> {
               ),
               const SizedBox(height: 16.0),
               TextFormField(
+                controller: _prenomController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer votre prénom';
+                  }
+                  return null;
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Prénom',
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              TextFormField(
                 controller: _emailController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -53,29 +70,32 @@ class _UserFormPageState extends State<UserFormPage> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _phoneController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre numéro de téléphone';
-                  }
-                  return null;
+              InkWell(
+                onTap: () {
+                  showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                  ).then((pickedDate) {
+                    if (pickedDate != null) {
+                      _dateNaissanceController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                    }
+                  });
                 },
-                decoration: const InputDecoration(
-                  labelText: 'Numéro de téléphone',
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _addressController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre adresse';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Adresse',
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    controller: _dateNaissanceController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer votre date de naissance';
+                      }
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Date de naissance',
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -83,16 +103,20 @@ class _UserFormPageState extends State<UserFormPage> {
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
                     try {
-                      final user = FirebaseAuth.instance.currentUser;
-                      final userId = user?.uid;
-                      final userData = {
-                        'name': _nameController.text,
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      final String userId = user?.uid ?? '';
+                      final Map<String, dynamic> userData = {
+                        'id': userId,
+                        'nom': _nameController.text,
+                        'prenom': _prenomController.text,
                         'email': _emailController.text,
-                        'phone': _phoneController.text,
-                        'address': _addressController.text,
+                        'date_naissance': _dateNaissanceController.text,
+                        'dons': [],
+                        'est_admin': false,
                       };
-                      await FirebaseFirestore.instance.collection('users').doc(userId).set(userData);
-                      Navigator.pushReplacementNamed(context, '/profile');
+                      final Utilisateur utilisateur = Utilisateur.fromMap(userData);
+                      await UtilisateurServices().addUtilisateur(utilisateur);
+                      Routes.router.navigateTo(context, '/login');
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Erreur d\'enregistrement : $e')),

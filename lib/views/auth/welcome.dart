@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../routes.dart';
+
 class WelcomeView extends StatelessWidget {
   const WelcomeView({Key? key}) : super(key: key);
 
@@ -36,7 +38,7 @@ class WelcomeView extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () => {
-                Navigator.pushNamed(context, '/setup'),
+                Routes.router.navigateTo(context, '/setup'),
               },
               child: const Text('Continuer'),
             )

@@ -12,7 +12,8 @@ class _RegisterViewState extends State<RegisterView> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nameController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
   bool _isLoading = false;
 
   @override
@@ -28,19 +29,6 @@ class _RegisterViewState extends State<RegisterView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                controller: _nameController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre nom';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Nom',
-                ),
-              ),
-              const SizedBox(height: 16.0),
               TextFormField(
                 controller: _emailController,
                 validator: (value) {
@@ -70,6 +58,22 @@ class _RegisterViewState extends State<RegisterView> {
                   labelText: 'Mot de passe',
                 ),
               ),
+              TextFormField(
+                controller: _confirmPasswordController,
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez confirmer votre mot de passe';
+                  }
+                  if (value != _passwordController.text) {
+                    return 'Les mots de passe ne correspondent pas';
+                  }
+                  return null;
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Confirmer le mot de passe',
+                ),
+              ),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _isLoading ? null : _register,
@@ -88,21 +92,15 @@ class _RegisterViewState extends State<RegisterView> {
         _isLoading = true;
       });
       try {
-        final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        final UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
-        final user = userCredential.user;
+
+        final User? user = userCredential.user;
         if (user != null) {
-          try {
-            await user.updateDisplayName(_nameController.text);
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Erreur lors de la mise à jour du nom d\'affichage : $e')),
-            );
-          }
+          Routes.router.navigateTo(context, '/welcome');
         }
-        Routes.router.navigateTo(context, '/profile');
       } catch (e) {
         String message;
         if (e is FirebaseAuthException) {

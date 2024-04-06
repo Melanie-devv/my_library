@@ -3,11 +3,13 @@ import 'package:my_library/views/auteur_detail_view.dart';
 import 'package:my_library/views/auth/forgot_password_view.dart';
 import 'package:my_library/views/auth/login_view.dart';
 import 'package:my_library/views/auth/register_view.dart';
+import 'package:my_library/views/auth/setup_view.dart';
+import 'package:my_library/views/auth/welcome.dart';
 import 'package:my_library/views/donnation_view.dart';
 import 'package:my_library/views/home_view.dart';
 import 'package:my_library/views/livre_detail_view.dart';
 import 'package:my_library/views/pdf_view.dart';
-import 'package:my_library/views/profile_view.dart';
+import 'package:my_library/views/profil_view.dart';
 
 class Routes {
   static final FluroRouter router = FluroRouter();
@@ -24,12 +26,23 @@ class Routes {
   static final Handler _forgotPasswordHandler = Handler(
     handlerFunc: (context, params) => ForgotPasswordView(),
   );
-  static final Handler _profileHandler = Handler(
-    handlerFunc: (context, params) => ProfileView(),
+
+  static final Handler _setupHandler = Handler(
+    handlerFunc: (context, params) => SetupView(),
   );
+
+  static final Handler _welcomeHandler = Handler(
+    handlerFunc: (context, params) => WelcomeView(),
+  );
+
+  static final Handler _profileHandler = Handler(
+    handlerFunc: (context, params) => ProfilView(),
+  );
+
   static final Handler _homeHandler = Handler(
     handlerFunc: (context, params) => HomeView(),
   );
+
   static final Handler _livreDetailHandler = Handler(
     handlerFunc: (context, params) {
       final String livreId = params['id']![0];
@@ -77,7 +90,19 @@ class Routes {
     );
 
     router.define(
-      '/profile',
+      '/setup',
+      handler: _setupHandler,
+      transitionType: TransitionType.inFromRight,
+    );
+
+    router.define(
+      '/welcome',
+      handler: _welcomeHandler,
+      transitionType: TransitionType.inFromRight,
+    );
+
+    router.define(
+      '/profil',
       handler: _profileHandler,
       transitionType: TransitionType.fadeIn,
     );
