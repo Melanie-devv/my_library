@@ -41,7 +41,9 @@ class ProfilView extends StatelessWidget {
 
                 return Scaffold(
                   appBar: AppBar(
-                    title: const Text('Profil'),
+                    automaticallyImplyLeading: false,
+                    title: const Text('Page de profil'),
+                    centerTitle: true,
                   ),
                   body: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,

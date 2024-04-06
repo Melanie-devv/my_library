@@ -24,7 +24,7 @@ class _DonationViewState extends State<DonationView> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Soutenez-nous'),
+        title: const Text('Qui sommes nous'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
