@@ -99,6 +99,10 @@ class _RegisterViewState extends State<RegisterView> {
 
         final User? user = userCredential.user;
         if (user != null) {
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
           Routes.router.navigateTo(context, '/welcome');
         }
       } catch (e) {

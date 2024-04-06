@@ -17,7 +17,8 @@ class UtilisateurServices {
 
   Future<void> addUtilisateur (Utilisateur user) async {
     try {
-      await _utilisateurs.doc().set(user.toMap());
+      _validateUtilisateur(user);
+      await _utilisateurs.doc(user.id).set(user.toMap());
     } catch (e) {
       throw Exception('Erreur lors de l\'ajout de l\'utilisateur : $e');
     }
@@ -53,14 +54,15 @@ class UtilisateurServices {
     return result.size > 0;
   }
 
-  bool _estMineur(DateTime dateNaissance) {
-    final DateTime now = DateTime.now();
-    final int age = now.year - dateNaissance.year;
-    if (now.month < dateNaissance.month || (now.month == dateNaissance.month && now.day < dateNaissance.day)) {
-      return true;
-    }
-    return age < 18;
+  bool _estMineur(Timestamp dateNaissanceTimestamp) {
+  final DateTime now = DateTime.now();
+  final DateTime dateNaissance = dateNaissanceTimestamp.toDate();
+  final int age = now.year - dateNaissance.year;
+  if (now.month < dateNaissance.month || (now.month == dateNaissance.month && now.day < dateNaissance.day)) {
+    return true;
   }
+  return age < 18;
+}
   //endregion
 
   //region Autres méthodes

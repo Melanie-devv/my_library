@@ -3,7 +3,6 @@ import 'package:my_library/models/livre.dart';
 import 'package:my_library/services/livre_services.dart';
 import 'package:my_library/views/pdf_view.dart';
 import 'package:my_library/widget/bottom_navigation_bar.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../models/auteur.dart';
 import '../routes.dart';

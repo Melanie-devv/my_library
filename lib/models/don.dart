@@ -1,22 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Don {
   String id;
   String utilisateur;
   double montant;
-  DateTime dateDonnation;
+  Timestamp dateDonation;
 
-  Don({required this.id, required this.utilisateur, required this.montant, required this.dateDonnation});
+  Don({required this.id, required this.utilisateur, required this.montant, required this.dateDonation});
 
   factory Don.fromMap(Map<String, dynamic> data) {
     final String id = data['id'];
     final String utilisateur = data['utilisateur'];
     final double montant = data['montant'];
-    final DateTime dateDonnation = DateTime.fromMillisecondsSinceEpoch(data['date_donnation']);
+    final Timestamp dateDonation = data['date_donation'];
 
     return Don(
       id: id,
       utilisateur: utilisateur,
       montant: montant,
-      dateDonnation: dateDonnation,
+      dateDonation: dateDonation,
     );
   }
 
@@ -24,7 +26,7 @@ class Don {
     return {
       'utilisateur': utilisateur,
       'montant': montant,
-      'date_donnation': dateDonnation.millisecondsSinceEpoch,
+      'date_donation': dateDonation,
     };
   }
 }

@@ -21,7 +21,7 @@ class DonServices {
     final Don don = Don(
       id: '',
       montant: montant,
-      dateDonnation: DateTime.now(),
+      dateDonation: Timestamp.now(),
       utilisateur: user.uid,
     );
 
@@ -42,11 +42,11 @@ class DonServices {
 
   //region Validation
 
-  void _validateDon(Don don) {
+   void _validateDon(Don don) {
     if (don.montant <= 0) {
       throw Exception('Le montant du don doit être supérieur à zéro');
     }
-    if (don.dateDonnation.isAfter(DateTime.now())) {
+    if (don.dateDonation.toDate().isAfter(DateTime.now())) {
       throw Exception('La date du don ne peut pas être dans le futur');
     }
   }
@@ -54,16 +54,24 @@ class DonServices {
 
   //region Autres méthodes
 
-  Future<double> getMontantTotalParMois(int mois, int annee) async {
-    final QuerySnapshot snapshot = await _dons
-        .where('dateDonnation.month', isEqualTo: mois)
-        .where('dateDonnation.year', isEqualTo: annee)
-        .get();
-
+  Future<double> getMontantTotalParMois(int mois, int annee, String? userId) async {
+    QuerySnapshot snapshot;
+    if (userId == null || userId.isEmpty) {
+      snapshot = await _dons.get();
+    } else {
+      snapshot = await _dons
+          .where('utilisateur', isEqualTo: userId)
+          .get();
+    }
     double montantTotal = 0;
     for (final DocumentSnapshot doc in snapshot.docs) {
-      final Don don = Don.fromMap(doc.data() as Map<String, dynamic>);
-      montantTotal += don.montant;
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      final Don don = Don.fromMap(data);
+      final DateTime dateDonation = don.dateDonation.toDate();
+      if (dateDonation.month == mois && dateDonation.year == annee) {
+        montantTotal += don.montant;
+      }
     }
 
     return montantTotal;
@@ -72,10 +80,14 @@ class DonServices {
   Future<List<Don>> getDonsByUser(String userId) async {
     final QuerySnapshot snapshot = await _dons
         .where('utilisateur', isEqualTo: userId)
-        .orderBy('dateDonnation', descending: true)
+        .orderBy('date_donation', descending: true)
         .get();
 
-    return snapshot.docs.map((doc) => Don.fromMap(doc.data() as Map<String, dynamic>)).toList();
+    return snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      return Don.fromMap(data);
+    }).toList();
   }
 
 

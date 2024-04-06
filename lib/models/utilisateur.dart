@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'don.dart';
 
 class Utilisateur {
@@ -5,7 +7,7 @@ class Utilisateur {
   String nom;
   String prenom;
   String email;
-  DateTime dateNaissance;
+  Timestamp dateNaissance;
   List<Don> dons = [];
   bool est_admin = false;
 
@@ -16,7 +18,7 @@ class Utilisateur {
     final String nom = data['nom'];
     final String prenom = data['prenom'];
     final String email = data['email'];
-    final DateTime dateNaissance = DateTime.parse(data['date_naissance']);
+    final Timestamp dateNaissance = data['date_naissance'];
     final List<Don> dons = (data['dons'] as List).map((don) => Don.fromMap(don)).toList();
     final bool est_admin = data['est_admin'];
 
@@ -36,7 +38,7 @@ class Utilisateur {
       'nom': nom,
       'prenom': prenom,
       'email': email,
-      'date_naissance': dateNaissance.millisecondsSinceEpoch,
+      'date_naissance': dateNaissance,
       'dons': dons.map((don) => don.toMap()).toList(),
       'est_admin': est_admin,
     };

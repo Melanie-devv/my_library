@@ -4,12 +4,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../services/don_services.dart';
 
-class DonnationView extends StatefulWidget {
+class DonationView extends StatefulWidget {
   @override
-  _DonnationViewState createState() => _DonnationViewState();
+  _DonationViewState createState() => _DonationViewState();
 }
 
-class _DonnationViewState extends State<DonnationView> {
+class _DonationViewState extends State<DonationView> {
   final TextEditingController _amountController = TextEditingController();
   final String paymentLink = 'https://donate.stripe.com/test_00g7vY0Is0c14wM9AA';
 

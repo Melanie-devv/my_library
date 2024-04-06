@@ -46,7 +46,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
             page = '/login';
             break;
           case 2:
-            page = '/donnation';
+            page = '/donation';
             break;
           case 3:
             page = '/profil';

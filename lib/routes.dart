@@ -5,10 +5,12 @@ import 'package:my_library/views/auth/login_view.dart';
 import 'package:my_library/views/auth/register_view.dart';
 import 'package:my_library/views/auth/setup_view.dart';
 import 'package:my_library/views/auth/welcome.dart';
-import 'package:my_library/views/donnation_view.dart';
+import 'package:my_library/views/donation_view.dart';
 import 'package:my_library/views/home_view.dart';
 import 'package:my_library/views/livre_detail_view.dart';
 import 'package:my_library/views/pdf_view.dart';
+import 'package:my_library/views/profil_donations_view.dart';
+import 'package:my_library/views/profil_informations.view.dart';
 import 'package:my_library/views/profil_view.dart';
 
 class Routes {
@@ -64,8 +66,16 @@ class Routes {
     },
   );
 
-  static final Handler _donnationHandler = Handler(
-    handlerFunc: (context, params) => DonnationView(),
+  static final Handler _donationHandler = Handler(
+    handlerFunc: (context, params) => DonationView(),
+  );
+
+  static final Handler _profilInformationsHandler = Handler(
+    handlerFunc: (context, params) => ProfilInformationsView(),
+  );
+
+  static final Handler _profilDonationsHandler = Handler(
+    handlerFunc: (context, params) => ProfilDonationsView(),
   );
 
 
@@ -132,9 +142,21 @@ class Routes {
     );
 
     router.define(
-      '/donnation',
-      handler: _donnationHandler,
+      '/donation',
+      handler: _donationHandler,
       transitionType: TransitionType.fadeIn,
+    );
+
+    router.define(
+      '/profil-informations',
+      handler: _profilInformationsHandler,
+      transitionType: TransitionType.inFromRight,
+    );
+
+    router.define(
+      '/profil-donations',
+      handler: _profilDonationsHandler,
+      transitionType: TransitionType.inFromRight,
     );
   }
 }
