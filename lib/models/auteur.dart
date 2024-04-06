@@ -30,7 +30,6 @@ class Auteur {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'nom': nom,
       'prenom': prenom,
       'date_naissance': dateNaissance.millisecondsSinceEpoch,

@@ -30,7 +30,6 @@ class Stock {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'adresse': adresse,
       'ville': ville,
       'code_postal': codePostal,

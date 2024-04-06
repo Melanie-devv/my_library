@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_library/models/don.dart';
 
 class DonServices {
@@ -11,10 +12,23 @@ class DonServices {
     return snapshot.docs.map((doc) => Don.fromMap(doc.data() as Map<String, dynamic>)).toList();
   }
 
-  Future<void> addDon(Don don) async {
+  Future<void> addDon(double montant) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return;
+    }
+
+    final Don don = Don(
+      id: '',
+      montant: montant,
+      dateDonnation: DateTime.now(),
+      utilisateur: user.uid,
+    );
+
     _validateDon(don);
     await _dons.add(don.toMap());
   }
+
 
   Future<void> updateDon(Don don) async {
     _validateDon(don);

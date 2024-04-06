@@ -56,6 +56,11 @@ class AuteurDetailView extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Text(
+                                '${auteur.nom} ${auteur.prenom}',
+                                style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 16.0),
                               FutureBuilder<int>(
                                 future: AuteurServices().getNombreLivresParAuteur(auteur.id),
                                 builder: (context, snapshot) {
@@ -65,7 +70,7 @@ class AuteurDetailView extends StatelessWidget {
                                   } else if (snapshot.hasError) {
                                     return Text('Erreur : ${snapshot.error}');
                                   }
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 },
                               ),
                               const SizedBox(height: 16.0),
@@ -78,7 +83,7 @@ class AuteurDetailView extends StatelessWidget {
                                   } else if (snapshot.hasError) {
                                     return Text('Erreur : ${snapshot.error}');
                                   }
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 },
                               ),
                             ],

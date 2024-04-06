@@ -1,17 +1,20 @@
 class Don {
   String id;
+  String utilisateur;
   double montant;
   DateTime dateDonnation;
 
-  Don({required this.id, required this.montant, required this.dateDonnation});
+  Don({required this.id, required this.utilisateur, required this.montant, required this.dateDonnation});
 
   factory Don.fromMap(Map<String, dynamic> data) {
     final String id = data['id'];
+    final String utilisateur = data['utilisateur'];
     final double montant = data['montant'];
     final DateTime dateDonnation = DateTime.fromMillisecondsSinceEpoch(data['date_donnation']);
 
     return Don(
       id: id,
+      utilisateur: utilisateur,
       montant: montant,
       dateDonnation: dateDonnation,
     );
@@ -19,22 +22,9 @@ class Don {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'utilisateur': utilisateur,
       'montant': montant,
       'date_donnation': dateDonnation.millisecondsSinceEpoch,
     };
   }
-
-  // METHODES
-
-  // double getMontantTotalParMois(int mois) {
-//     double montantTotal = 0;
-//     for (Don don in dons) {
-//       if (don.dateDonnation.month == mois) {
-//         montantTotal += don.montant;
-//       }
-//     }
-//     return montantTotal;
-//   }
-
 }

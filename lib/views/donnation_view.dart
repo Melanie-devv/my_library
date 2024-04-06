@@ -2,8 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:my_library/widget/bottom_navigation_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DonnationView extends StatelessWidget {
+import '../services/don_services.dart';
+
+class DonnationView extends StatefulWidget {
+  @override
+  _DonnationViewState createState() => _DonnationViewState();
+}
+
+class _DonnationViewState extends State<DonnationView> {
+  final TextEditingController _amountController = TextEditingController();
   final String paymentLink = 'https://donate.stripe.com/test_00g7vY0Is0c14wM9AA';
+
+  Future<void> _saveDonationAmount() async {
+    final amount = double.tryParse(_amountController.text);
+    await DonServices().addDon(amount!);
+    _amountController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +46,19 @@ class DonnationView extends StatelessWidget {
               textAlign: TextAlign.justify,
             ),
             const SizedBox(height: 40.0),
+            TextField(
+              controller: _amountController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Montant du don',
+                border: OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.euro),
+                  onPressed: _saveDonationAmount,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20.0),
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -49,6 +76,7 @@ class DonnationView extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
+                  _saveDonationAmount();
                   launchUrl(Uri.parse(paymentLink));
                 },
                 child: const Text('Faire un don'),

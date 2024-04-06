@@ -41,7 +41,6 @@ class Livre {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'auteur_id': auteurId,
       'titre': titre,
       'categorie': categorie,

@@ -33,7 +33,6 @@ class Utilisateur {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'nom': nom,
       'prenom': prenom,
       'email': email,
