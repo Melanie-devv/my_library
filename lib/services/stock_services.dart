@@ -54,27 +54,35 @@ class StockServices {
     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
       CollectionReference stockLivresCollection = FirebaseFirestore.instance.collection('stocks').doc(doc.id).collection('livres');
       DocumentSnapshot<Object?> documentSnapshot = await stockLivresCollection.doc(livreId).get();
-      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
-      int quantite = (data['quantite']);
-      quantiteTotal += quantite;
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+        int quantite = (data['quantite']);
+        quantiteTotal += quantite;
+      }
     }
     return quantiteTotal;
   }
 
 
-  Future<List<Stock>> getStockContenantLivre(String livreid) async {
+  Future<List<Stock>> getStockContenantLivre(String livreId) async {
     List<Stock> stocksContenantLivre = [];
-    QuerySnapshot querySnapshot = await _stocks.where('livres.$livreid', isGreaterThan: 0).get();
+    QuerySnapshot querySnapshot = await _stocks.get();
     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      Stock stock = Stock(
-        id: doc.id,
-        adresse: data['adresse'],
-        ville: data['ville'],
-        codePostal: data['code_postal'],
-        description: data['description'],
-      );
-      stocksContenantLivre.add(stock);
+      DocumentSnapshot livreSnapshot = await doc.reference.collection('livres').doc(livreId).get();
+      if (livreSnapshot.exists) {
+        Map<String, dynamic> livreData = livreSnapshot.data() as Map<String, dynamic>;
+        if (livreData['quantite'] > 0) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          Stock stock = Stock(
+            id: doc.id,
+            adresse: data['adresse'],
+            ville: data['ville'],
+            codePostal: data['code_postal'],
+            description: data['description'],
+          );
+          stocksContenantLivre.add(stock);
+        }
+      }
     }
     return stocksContenantLivre;
   }

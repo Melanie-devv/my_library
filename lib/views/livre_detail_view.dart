@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_library/extensions.dart';
 import 'package:my_library/models/livre.dart';
 import 'package:my_library/services/livre_services.dart';
 import 'package:my_library/views/pdf_view.dart';
+import 'package:my_library/views/reservation_view.dart';
 import 'package:my_library/widget/bottom_navigation_bar.dart';
 
 import '../models/auteur.dart';
@@ -9,17 +11,6 @@ import '../routes.dart';
 import '../services/auteur_services.dart';
 import '../services/stock_services.dart';
 import 'auteur_detail_view.dart';
-
-extension DateFormatter on DateTime {
-  String formatDate() {
-    final List<String> months = [
-      'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-      'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
-    ];
-
-    return '${day} ${months[month - 1]} $year';
-  }
-}
 
 class LivreDetailView extends StatelessWidget {
   final String livreId;
@@ -179,7 +170,7 @@ class LivreDetailView extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          '${livre.resume}',
+                          livre.resume,
                           style: const TextStyle(
                             color: Colors.black54,
                             fontSize: 15,
@@ -254,6 +245,57 @@ class LivreDetailView extends StatelessWidget {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            FutureBuilder<int>(
+                              future: stockServices.getQuantiteEnStock(livre.id),
+                              builder: (context, snapshot) {
+                                final int quantiteEnStock = snapshot.data ?? 0;
+                                if (snapshot.hasData) {
+                                  return ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ReservationView(livreId: livre.id),
+                                        ),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    child:  Container(
+                                      width: MediaQuery.of(context).size.width * 0.8,
+                                      height: 50,
+                                      alignment: Alignment.center,
+                                      child: const Text(
+                                        'Réserver le livre',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text(
+                                    'Rupture de stock !',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: quantiteEnStock > 0 ? Colors.green : Colors.red,
+                                    ),
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 26),
                         const Text(
                           'D\'autres livres du même auteur',
@@ -280,7 +322,7 @@ class LivreDetailView extends StatelessWidget {
                                       onTap: () {
                                         Routes.router.navigateTo(context, '/livre/${livre.id}');
                                       },
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 120,
                                         child: Column(
                                           children: <Widget>[

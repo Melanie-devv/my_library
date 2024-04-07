@@ -12,6 +12,7 @@ import 'package:my_library/views/pdf_view.dart';
 import 'package:my_library/views/profil_donations_view.dart';
 import 'package:my_library/views/profil_informations.view.dart';
 import 'package:my_library/views/profil_view.dart';
+import 'package:my_library/views/reservation_view.dart';
 
 class Routes {
   static final FluroRouter router = FluroRouter();
@@ -76,6 +77,13 @@ class Routes {
 
   static final Handler _profilDonationsHandler = Handler(
     handlerFunc: (context, params) => ProfilDonationsView(),
+  );
+
+  static final Handler _reservationHandler = Handler(
+    handlerFunc: (context, params) {
+      final String livreId = params['livreId']![0];
+      return ReservationView(livreId: livreId);
+    },
   );
 
 
@@ -157,6 +165,12 @@ class Routes {
       '/profil-donations',
       handler: _profilDonationsHandler,
       transitionType: TransitionType.inFromRight,
+    );
+
+    router.define(
+      '/reservation/:livreId',
+      handler: _reservationHandler,
+      transitionType: TransitionType.fadeIn,
     );
   }
 }
