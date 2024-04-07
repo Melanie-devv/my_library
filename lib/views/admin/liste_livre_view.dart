@@ -36,17 +36,17 @@ class _ListeLivresViewState extends State<ListeLivresView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Suppression d\'un livre'),
-          content: Text('Êtes-vous sûr de vouloir supprimer ce livre ?'),
+          title: const Text('Suppression d\'un livre'),
+          content: const Text('Êtes-vous sûr de vouloir supprimer ce livre ?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Annuler'),
+              child: const Text('Annuler'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Supprimer'),
+              child: const Text('Supprimer'),
               onPressed: () {
                 _deleteLivre(id);
                 Navigator.of(context).pop();

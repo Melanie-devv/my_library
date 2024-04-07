@@ -5,9 +5,13 @@ class StockServices {
   final CollectionReference _stocks = FirebaseFirestore.instance.collection('stocks');
 
   Future<List<Stock>> getStocks() async {
-    final QuerySnapshot snapshot = await _stocks.get();
-    return snapshot.docs.map((doc) => Stock.fromMap(doc.data() as Map<String, dynamic>)).toList();
-  }
+  final QuerySnapshot snapshot = await _stocks.get();
+  return snapshot.docs.map((doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    data['id'] = doc.id;
+    return Stock.fromMap(data);
+  }).toList();
+}
 
   //region CRUD
   Future<void> addStock(Stock stock) async {

@@ -37,4 +37,8 @@ class Utilisateur {
       'est_admin': est_admin,
     };
   }
+
+  bool isAdmin() {
+    return est_admin;
+  }
 }

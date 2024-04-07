@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/extensions.dart';
 import 'package:my_library/models/livre.dart';
@@ -10,12 +11,35 @@ import '../models/auteur.dart';
 import '../routes.dart';
 import '../services/auteur_services.dart';
 import '../services/stock_services.dart';
+import '../services/utilisateur_services.dart';
 import 'auteur_detail_view.dart';
 
-class LivreDetailView extends StatelessWidget {
+class LivreDetailView extends StatefulWidget {
   final String livreId;
 
   const LivreDetailView({required this.livreId});
+
+  @override
+  _LivreDetailViewState createState() => _LivreDetailViewState();
+}
+
+class _LivreDetailViewState extends State<LivreDetailView> {
+  bool _estDejaFavori = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFavori();
+  }
+
+  Future<void> _checkFavori() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String utilisateurId = user!.uid;
+    final estDejaFavori = await UtilisateurServices().isFavori(utilisateurId, widget.livreId);
+    setState(() {
+      _estDejaFavori = estDejaFavori;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +47,8 @@ class LivreDetailView extends StatelessWidget {
     final AuteurServices auteurServices = AuteurServices();
     final StockServices stockServices = StockServices();
 
-
     return FutureBuilder<Livre>(
-      future: livreServices.getLivreById(livreId),
+      future: livreServices.getLivreById(widget.livreId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final Livre livre = snapshot.data!;
@@ -48,15 +71,38 @@ class LivreDetailView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Center(
-                          child: Text(
-                            livre.titre,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                livre.titre,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.favorite,
+                                color: _estDejaFavori ? Colors.red : Colors.grey,
+                                size: 40,
+                              ),
+                              onPressed: () async {
+                                final User? user = FirebaseAuth.instance.currentUser;
+                                final String utilisateurId = user!.uid;
+                                if (_estDejaFavori) {
+                                  await UtilisateurServices().removeFavori(utilisateurId, widget.livreId);
+                                } else {
+                                  await UtilisateurServices().addFavori(utilisateurId, widget.livreId);
+                                }
+                                setState(() {
+                                  _estDejaFavori = !_estDejaFavori;
+                                });
+                              },
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         FutureBuilder<Auteur>(

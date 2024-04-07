@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_library/models/utilisateur.dart';
+import 'package:my_library/services/livre_services.dart';
 
 import '../models/don.dart';
+import '../models/livre.dart';
 import 'don_services.dart';
 
 class UtilisateurServices {
@@ -92,5 +94,32 @@ class UtilisateurServices {
     }
     return montantTotal;
   }
+
+  Future<void> addFavori(String utilisateurId, String livreId) async {
+    final livreRef = FirebaseFirestore.instance.collection('livres').doc(livreId);
+    await _utilisateurs.doc(utilisateurId).collection('favoris').doc(livreId).set({
+      'livre': livreRef,
+    });
+  }
+
+  Future<void> removeFavori(String utilisateurId, String livreId) async {
+    await _utilisateurs.doc(utilisateurId).collection('favoris').doc(livreId).delete();
+  }
+
+  Future<List<Livre>> getFavoris(String utilisateurId) async {
+    final QuerySnapshot snapshot = await _utilisateurs.doc(utilisateurId).collection('favoris').get();
+    final List<Livre> favoris = [];
+    for (final doc in snapshot.docs) {
+      final Livre livre = await LivreServices().getLivreById(doc.id);
+      favoris.add(livre);
+    }
+    return favoris;
+  }
+
+  Future<bool> isFavori(String utilisateurId, String livreId) async {
+    final DocumentSnapshot snapshot = await _utilisateurs.doc(utilisateurId).collection('favoris').doc(livreId).get();
+    return snapshot.exists;
+  }
+
   //endregion
 }

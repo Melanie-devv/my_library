@@ -70,7 +70,7 @@ class ProfilView extends StatelessWidget {
                         title: const Text('Mes favoris'),
                         trailing: const Icon(Icons.arrow_forward_ios),
                         onTap: () {
-                          // TODO: Ajouter la redirection vers la page de favoris
+                          Routes.router.navigateTo(context, '/favoris');
                         },
                       ),
                       const Divider(),
@@ -90,6 +90,17 @@ class ProfilView extends StatelessWidget {
                         },
                       ),
                       const Divider(),
+                      if (user.isAdmin())
+                        ...[
+                          ListTile(
+                            title: const Text('Administration'),
+                            trailing: const Icon(Icons.arrow_forward_ios),
+                            onTap: () {
+                              Routes.router.navigateTo(context, '/administration');
+                            },
+                          ),
+                          const Divider(),
+                        ],
                       const SizedBox(height: 60),
                       ElevatedButton(
                         onPressed: () {

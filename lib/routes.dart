@@ -1,4 +1,5 @@
 import 'package:fluro/fluro.dart';
+import 'package:my_library/views/admin/administration_view.dart';
 import 'package:my_library/views/auteur_detail_view.dart';
 import 'package:my_library/views/auth/forgot_password_view.dart';
 import 'package:my_library/views/auth/login_view.dart';
@@ -6,6 +7,7 @@ import 'package:my_library/views/auth/register_view.dart';
 import 'package:my_library/views/auth/setup_view.dart';
 import 'package:my_library/views/auth/welcome.dart';
 import 'package:my_library/views/donation_view.dart';
+import 'package:my_library/views/favoris_view.dart';
 import 'package:my_library/views/home_view.dart';
 import 'package:my_library/views/livre_detail_view.dart';
 import 'package:my_library/views/pdf_view.dart';
@@ -45,6 +47,10 @@ class Routes {
 
   static final Handler _homeHandler = Handler(
     handlerFunc: (context, params) => HomeView(),
+  );
+
+  static final Handler _favorisHandler = Handler(
+    handlerFunc: (context, params) => FavorisView(),
   );
 
   static final Handler _livreDetailHandler = Handler(
@@ -89,6 +95,10 @@ class Routes {
       final String livreId = params['livreId']![0];
       return ReservationView(livreId: livreId);
     },
+  );
+
+  static final Handler _administrationHandler = Handler(
+    handlerFunc: (context, params) => AdministrationView(),
   );
 
 
@@ -137,6 +147,12 @@ class Routes {
     );
 
     router.define(
+      '/favoris',
+      handler: _favorisHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+
+    router.define(
       '/livre/:id',
       handler: _livreDetailHandler,
       transitionType: TransitionType.fadeIn,
@@ -181,6 +197,12 @@ class Routes {
     router.define(
       '/reservation/:livreId',
       handler: _reservationHandler,
+      transitionType: TransitionType.fadeIn,
+    );
+
+    router.define(
+      '/administration',
+      handler: _administrationHandler,
       transitionType: TransitionType.fadeIn,
     );
   }
