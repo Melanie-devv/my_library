@@ -175,7 +175,7 @@ class _LivreDetailViewState extends State<LivreDetailView> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: FutureBuilder<int>(
-                                      future: stockServices.getQuantiteEnStock(livre.id),
+                                      future: stockServices.getQuantiteTotaleEnStock(livre.id),
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
                                           final int quantiteEnStock = snapshot.data!;
@@ -296,7 +296,7 @@ class _LivreDetailViewState extends State<LivreDetailView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             FutureBuilder<int>(
-                              future: stockServices.getQuantiteEnStock(livre.id),
+                              future: stockServices.getQuantiteTotaleEnStock(livre.id),
                               builder: (context, snapshot) {
                                 final int quantiteEnStock = snapshot.data ?? 0;
                                 if (snapshot.hasData) {

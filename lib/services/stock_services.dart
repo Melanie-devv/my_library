@@ -52,18 +52,17 @@ class StockServices {
   }
 
   Future<List<String>> getLivres(String stockId) async {
-    DocumentSnapshot snapshot = await _stocks.doc(stockId).get();
-    if (snapshot.exists) {
-      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-      List<String> livres = data['livres'].keys.toList();
+    final QuerySnapshot snapshot = await _stocks.doc(stockId).collection('livres').get();
+    if (snapshot.docs.isNotEmpty) {
+      List<String> livres = snapshot.docs.map((doc) => doc.id).toList();
       return livres;
     } else {
-      throw Exception('Stock non trouvé');
+      throw Exception('Aucun livre trouvé dans ce stock');
     }
   }
 
 
-  Future<int> getQuantiteEnStock(String livreId) async {
+  Future<int> getQuantiteTotaleEnStock(String livreId) async {
     int quantiteTotal = 0;
     QuerySnapshot querySnapshot = await _stocks.get();
     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
@@ -76,6 +75,19 @@ class StockServices {
       }
     }
     return quantiteTotal;
+  }
+
+  Future<int> getQuantiteEnStock(String livreId, String stockId) async {
+    DocumentReference livreRef = _stocks.doc(stockId).collection('livres').doc(livreId);
+    DocumentSnapshot livreSnapshot = await livreRef.get();
+
+    if (livreSnapshot.exists) {
+      Map<String, dynamic> livreData = livreSnapshot.data() as Map<String, dynamic>;
+      int quantite = livreData['quantite'] ?? 0;
+      return quantite;
+    } else {
+      throw Exception('Le livre spécifié n\'existe pas dans ce stock.');
+    }
   }
 
 
@@ -104,24 +116,16 @@ class StockServices {
 
 
   Future<void> ajouterLivre(String stockId, String livreId, int quantite) async {
-    DocumentReference stockRef = _stocks.doc(stockId);
-    DocumentSnapshot stockSnapshot = await stockRef.get();
+    DocumentReference livreRef = _stocks.doc(stockId).collection('livres').doc(livreId);
+    DocumentSnapshot livreSnapshot = await livreRef.get();
 
-    if (stockSnapshot.exists) {
-      if (stockSnapshot.data() is Map<String, dynamic>) {
-        Map<String, dynamic> stockData = stockSnapshot.data() as Map<String, dynamic>;
-        Map<String, int> livres = stockData['livres'];
-
-        if (livres.containsKey(livreId)) {
-          livres[livreId] = (livres[livreId] ?? 0) + quantite;
-        } else {
-          livres[livreId] = quantite;
-        }
-
-        await stockRef.update({'livres': livres});
-      }
+    if (livreSnapshot.exists) {
+      Map<String, dynamic> livreData = livreSnapshot.data() as Map<String, dynamic>;
+      print(livreData);
+      int currentQuantity = livreData['quantite'] ?? 0;
+      await livreRef.update({'quantite': currentQuantity + quantite});
     } else {
-      throw Exception('Le stock n\'existe pas');
+      await livreRef.set({'quantite': quantite});
     }
   }
 

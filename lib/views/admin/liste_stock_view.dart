@@ -3,6 +3,8 @@ import 'package:my_library/models/stock.dart';
 import 'package:my_library/services/stock_services.dart';
 import 'package:my_library/views/admin/modifier_stock_view.dart';
 
+import 'livre_stock_view.dart';
+
 class ListeStocksView extends StatefulWidget {
   @override
   _ListeStocksViewState createState() => _ListeStocksViewState();
@@ -81,6 +83,17 @@ class _ListeStocksViewState extends State<ListeStocksView> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      IconButton(
+                        icon: const Icon(Icons.collections_bookmark_rounded),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LivreStockView(stockId: stock.id),
+                            ),
+                          );
+                        },
+                      ),
                       IconButton(
                         icon: const Icon(Icons.edit),
                         onPressed: () {

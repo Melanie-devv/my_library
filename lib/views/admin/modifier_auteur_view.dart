@@ -88,6 +88,8 @@ class _ModifierAuteurViewState extends State<ModifierAuteurView> {
                   }
                   return null;
                 },
+                maxLines: 13,
+                keyboardType: TextInputType.multiline,
               ),
               ElevatedButton(
                 onPressed: () {
