@@ -40,6 +40,7 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,6 +140,10 @@ class _LoginViewState extends State<LoginView> {
         _isLoading = true;
       });
       try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
         Routes.router.navigateTo(context, '/home');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

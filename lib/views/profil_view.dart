@@ -33,6 +33,7 @@ class ProfilView extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
               } else if (snapshot.hasError) {
+                print(snapshot.error);
                 return const Text('Erreur lors de la récupération de l\'utilisateur');
               } else {
                 final Utilisateur? user = snapshot.data;

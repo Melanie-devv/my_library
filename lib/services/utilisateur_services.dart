@@ -95,12 +95,9 @@ class UtilisateurServices {
     return montantTotal;
   }
 
-  Future<void> addFavori(String utilisateurId, String livreId) async {
-    final livreRef = FirebaseFirestore.instance.collection('livres').doc(livreId);
-    await _utilisateurs.doc(utilisateurId).collection('favoris').doc(livreId).set({
-      'livre': livreRef,
-    });
-  }
+ Future<void> addFavori(String utilisateurId, String livreId) async {
+  await _utilisateurs.doc(utilisateurId).collection('favoris').doc(livreId).set({});
+}
 
   Future<void> removeFavori(String utilisateurId, String livreId) async {
     await _utilisateurs.doc(utilisateurId).collection('favoris').doc(livreId).delete();

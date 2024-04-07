@@ -1,7 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:my_library/views/admin/administration_view.dart';
 import 'package:my_library/views/auteur_detail_view.dart';
-import 'package:my_library/views/auth/forgot_password_view.dart';
 import 'package:my_library/views/auth/login_view.dart';
 import 'package:my_library/views/auth/register_view.dart';
 import 'package:my_library/views/auth/setup_view.dart';
@@ -27,10 +26,6 @@ class Routes {
 
   static final Handler _loginHandler = Handler(
     handlerFunc: (context, params) => LoginView(),
-  );
-
-  static final Handler _forgotPasswordHandler = Handler(
-    handlerFunc: (context, params) => ForgotPasswordView(),
   );
 
   static final Handler _setupHandler = Handler(
@@ -113,12 +108,6 @@ class Routes {
     router.define(
       '/login',
       handler: _loginHandler,
-      transitionType: TransitionType.fadeIn,
-    );
-
-    router.define(
-      '/forgot-password',
-      handler: _forgotPasswordHandler,
       transitionType: TransitionType.fadeIn,
     );
 
