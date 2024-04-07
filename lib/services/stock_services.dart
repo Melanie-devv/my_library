@@ -121,7 +121,6 @@ class StockServices {
 
     if (livreSnapshot.exists) {
       Map<String, dynamic> livreData = livreSnapshot.data() as Map<String, dynamic>;
-      print(livreData);
       int currentQuantity = livreData['quantite'] ?? 0;
       await livreRef.update({'quantite': currentQuantity + quantite});
     } else {
@@ -130,20 +129,18 @@ class StockServices {
   }
 
   Future<void> retirerLivre(String stockId, String livreId, int quantite) async {
-    DocumentReference stockRef = _stocks.doc(stockId);
-    DocumentSnapshot stockSnapshot = await stockRef.get();
+    DocumentReference livreRef = _stocks.doc(stockId).collection('livres').doc(livreId);
+    DocumentSnapshot livreSnapshot = await livreRef.get();
 
-    if (stockSnapshot.exists) {
-      Map<String, dynamic> stockData = stockSnapshot.data() as Map<String, dynamic>;
-      int currentQuantity = stockData['livres'][livreId] ?? 0;
+    if (livreSnapshot.exists) {
+      Map<String, dynamic> stockData = livreSnapshot.data() as Map<String, dynamic>;
+      int currentQuantity = stockData['quantite'] ?? 0;
 
-      if (currentQuantity >= quantite) {
-        await stockRef.update({
-          'livres.$livreId': currentQuantity - quantite,
-        });
-      } else {
-        throw Exception('La quantité restante est insuffisante pour effectuer cette opération.');
+      if (currentQuantity + quantite < 0) {
+        throw Exception('La quantité à retirer est supérieure à la quantité en stock.');
       }
+
+      await livreRef.update({'quantite': currentQuantity + quantite});
     } else {
       throw Exception('Le stock spécifié n\'existe pas.');
     }
