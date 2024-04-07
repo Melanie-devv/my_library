@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_library/models/reservation.dart';
 
 class ReservationServices {
-  final CollectionReference _reservations = FirebaseFirestore.instance.collection('reservations');
+  final CollectionReference _reservations = FirebaseFirestore.instance
+      .collection('reservations');
 
   //region CRUD
 
@@ -13,23 +14,28 @@ class ReservationServices {
         Reservation.fromMap(doc.data() as Map<String, dynamic>)).toList();
   }
 
-  Future<void> addReservation(String idLivre) async {
+  Future<void> addReservation(String idLivre, String idStock) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     }
 
-    final List<Reservation> reservationsEnCours = await getReservationEnCoursByUser(user.uid);
+    final List<
+        Reservation> reservationsEnCours = await getReservationEnCoursByUser(
+        user.uid);
     if (reservationsEnCours.isNotEmpty) {
-      throw Exception('Vous ne pouvez pas avoir deux réservations en même temps.');
+      throw Exception(
+          'Vous ne pouvez pas avoir deux réservations en même temps.');
     }
 
     final Reservation reservation = Reservation(
       id: '',
       utilisateur: user.uid,
       livre: idLivre,
+      stock: idStock,
       dateDebutReservation: Timestamp.now(),
-      dateFinReservation: Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
+      dateFinReservation: Timestamp.fromDate(
+          DateTime.now().add(const Duration(days: 30))),
     );
 
     _validateReservation(reservation);
@@ -55,6 +61,9 @@ class ReservationServices {
     }
     if (reservation.livre.isEmpty) {
       throw Exception('L\'identifiant du livre ne peut pas être vide');
+    }
+    if (reservation.stock.isEmpty) {
+      throw Exception('L\'identifiant du stock ne peut pas être vide');
     }
     if (reservation.dateDebutReservation.toDate().isAfter(DateTime.now())) {
       throw Exception(
@@ -87,7 +96,8 @@ class ReservationServices {
   Future<List<Reservation>> getReservationEnCoursByUser(String userId) async {
     final QuerySnapshot snapshot = await _reservations
         .where('utilisateur', isEqualTo: userId)
-        .where('date_fin_reservation', isGreaterThan: Timestamp.fromDate(DateTime.now()))
+        .where('date_fin_reservation',
+        isGreaterThan: Timestamp.fromDate(DateTime.now()))
         .get();
 
     return snapshot.docs.map((doc) {
@@ -96,5 +106,4 @@ class ReservationServices {
       return Reservation.fromMap(data);
     }).toList();
   }
-
 }

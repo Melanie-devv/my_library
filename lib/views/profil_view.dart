@@ -86,7 +86,7 @@ class ProfilView extends StatelessWidget {
                         title: const Text('Réservations'),
                         trailing: const Icon(Icons.arrow_forward_ios),
                         onTap: () {
-                          // TODO: Ajouter la redirection vers la page de reservations
+                          Routes.router.navigateTo(context, '/profil-reservations');
                         },
                       ),
                       const Divider(),

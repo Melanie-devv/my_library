@@ -36,6 +36,17 @@ class StockServices {
 
   //region Autres méthodes
 
+  Future<Stock> getStockById(String stockId) async {
+    final DocumentSnapshot snapshot = await _stocks.doc(stockId).get();
+    if (snapshot.exists) {
+      final data = snapshot.data() as Map<String, dynamic>;
+      data['id'] = snapshot.id;
+      return Stock.fromMap(data);
+    } else {
+      throw Exception('Stock introuvable');
+    }
+  }
+
   Future<List<String>> getLivres(String stockId) async {
     DocumentSnapshot snapshot = await _stocks.doc(stockId).get();
     if (snapshot.exists) {

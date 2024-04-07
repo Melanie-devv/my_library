@@ -11,6 +11,7 @@ import 'package:my_library/views/livre_detail_view.dart';
 import 'package:my_library/views/pdf_view.dart';
 import 'package:my_library/views/profil_donations_view.dart';
 import 'package:my_library/views/profil_informations.view.dart';
+import 'package:my_library/views/profil_reservations_view.dart';
 import 'package:my_library/views/profil_view.dart';
 import 'package:my_library/views/reservation_view.dart';
 
@@ -77,6 +78,10 @@ class Routes {
 
   static final Handler _profilDonationsHandler = Handler(
     handlerFunc: (context, params) => ProfilDonationsView(),
+  );
+
+  static final Handler _profilReservationsHandler = Handler(
+    handlerFunc: (context, params) => ProfilReservationsView(),
   );
 
   static final Handler _reservationHandler = Handler(
@@ -164,6 +169,12 @@ class Routes {
     router.define(
       '/profil-donations',
       handler: _profilDonationsHandler,
+      transitionType: TransitionType.inFromRight,
+    );
+
+    router.define(
+      '/profil-reservations',
+      handler: _profilReservationsHandler,
       transitionType: TransitionType.inFromRight,
     );
 

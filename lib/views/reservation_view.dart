@@ -6,6 +6,7 @@ import 'package:my_library/services/livre_services.dart';
 import 'package:my_library/services/stock_services.dart';
 import 'package:my_library/widget/bottom_navigation_bar.dart';
 
+import '../routes.dart';
 import '../services/reservation_services.dart';
 
 class ReservationView extends StatefulWidget {
@@ -81,15 +82,15 @@ class _ReservationViewState extends State<ReservationView> {
                   child: const Text('Confirmer'),
                   onPressed: () async {
                     try {
-                      await ReservationServices().addReservation(_livre.id);
+                      await ReservationServices().addReservation(_livre.id, stock.id);
                       Navigator.of(context).pop();
-                      // TODO: rediriger vers la page info reservation
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Le livre a été réservé avec succès.'),
                           backgroundColor: Colors.green,
                         )
                       );
+                      Routes.router.navigateTo(context, '/profil-reservations');
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
