@@ -4,6 +4,8 @@ import 'package:my_library/views/admin/ajouter_stock_view.dart';
 import 'package:my_library/views/admin/liste_livre_view.dart';
 import 'package:my_library/views/admin/liste_stock_view.dart';
 
+import 'liste_auteur_view.dart';
+
 class AdministrationView extends StatefulWidget {
   @override
   _AdministrationViewState createState() => _AdministrationViewState();
@@ -15,7 +17,7 @@ class _AdministrationViewState extends State<AdministrationView> {
   final List<Widget> _children = [
     ListeLivresView(),
     ListeStocksView(),
-    const Center(child: Text('Auteurs')),
+    ListeAuteursView(),
   ];
 
   void onTabTapped(int index) {
