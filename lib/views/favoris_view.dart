@@ -79,7 +79,7 @@ class _FavorisViewState extends State<FavorisView> {
                                   height: 100,
                                 ),
                                 title: Text(livre.titre),
-                                subtitle: Text('${auteur?.nom} ${auteur?.prenom}'),
+                                subtitle: Text('${auteur?.prenom} ${auteur?.nom}'),
                                 trailing: const Icon(Icons.arrow_forward_ios),
                               ),
                             );

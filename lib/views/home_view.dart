@@ -103,140 +103,87 @@ class _HomeViewState extends State<HomeView> {
           ),
           Expanded(
             child: _searchResults.isEmpty
-                ? FutureBuilder<List<Livre>>(
-              future: _livreServices.getLivres(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('Erreur lors de la récupération des livres'),
-                  );
-                } else {
-                  final List<Livre> livres = snapshot.data!;
-                  return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.6,
-                      mainAxisSpacing: 8.0,
-                      crossAxisSpacing: 8.0,
-                    ),
-                    itemCount: livres.length,
-                    itemBuilder: (context, index) {
-                      final Livre livre = livres[index];
-                      if (_auteurs.isEmpty) {
-                        return const Center(
-                          child: SizedBox(),
-                        );
-                      }
-                      final Auteur auteur = _auteurs.firstWhere((a) => a.id == livre.auteurId);
-                      return GestureDetector(
-                        onTap: () {
-                          Routes.router.navigateTo(context, '/livre/${livre.id}');
-                        },
-                        child: Card(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Image.network(
-                                  livre.couverture,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      livre.titre,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${auteur.prenom} ${auteur.nom}',
-                                      style: const TextStyle(
-                                        fontSize: 14.0,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
-            )
-                : GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.6,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-              ),
-              itemCount: _searchResults.length,
-              itemBuilder: (context, index) {
-                final Livre livre = _searchResults[index];
-                if (_auteurs.isEmpty) {
-                  return const Center(
-                    child: SizedBox(),
-                  );
-                }
-                final Auteur auteur = _auteurs.firstWhere((a) => a.id == livre.auteurId);
-                return GestureDetector(
-                  onTap: () {
-                    Routes.router.navigateTo(context, '/livre/${livre.id}');
-                  },
-                  child: Card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Image.network(
-                            livre.couverture,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                livre.titre,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                              Text(
-                                '${auteur.prenom} ${auteur.nom}',
-                                style: const TextStyle(
-                                  fontSize: 14.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                ? _buildBookGrid(_livres)
+                : _buildBookGrid(_searchResults),
           ),
         ],
       ),
       bottomNavigationBar: const BottomNavigationBarWidget(0),
+    );
+  }
+
+  Widget _buildBookGrid(List<Livre> livres) {
+    return FutureBuilder<List<Livre>>(
+      future: _livreServices.getLivres(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return const Center(
+            child: Text('Erreur lors de la récupération des livres'),
+          );
+        } else {
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.6,
+              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8.0,
+            ),
+            itemCount: livres.length,
+            itemBuilder: (context, index) {
+              final Livre livre = livres[index];
+              if (_auteurs.isEmpty) {
+                return const Center(
+                  child: SizedBox(),
+                );
+              }
+              final Auteur auteur = _auteurs.firstWhere((a) => a.id == livre.auteurId);
+              return GestureDetector(
+                onTap: () {
+                  Routes.router.navigateTo(context, '/livre/${livre.id}');
+                },
+                child: Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Image.network(
+                          livre.couverture,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              livre.titre,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            Text(
+                              '${auteur.prenom} ${auteur.nom}',
+                              style: const TextStyle(
+                                fontSize: 14.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
     );
   }
 }
