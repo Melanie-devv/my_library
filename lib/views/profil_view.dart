@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/models/utilisateur.dart';
 import 'package:my_library/services/utilisateur_services.dart';
@@ -6,6 +7,13 @@ import 'package:my_library/widget/bottom_navigation_bar.dart';
 import '../routes.dart';
 
 class ProfilView extends StatelessWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _signOut(BuildContext context) async {
+    await _auth.signOut();
+    Routes.router.navigateTo(context, '/login', clearStack: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final UtilisateurServices utilisateurService = UtilisateurServices();
@@ -44,6 +52,13 @@ class ProfilView extends StatelessWidget {
                     automaticallyImplyLeading: false,
                     title: const Text('Page de profil'),
                     centerTitle: true,
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.logout),
+                        color: Colors.red,
+                        onPressed: () => _signOut(context),
+                      ),
+                    ],
                   ),
                   body: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
