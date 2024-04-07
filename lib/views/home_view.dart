@@ -17,6 +17,7 @@ class _HomeViewState extends State<HomeView> {
   final AuteurServices _auteurServices = AuteurServices();
   List<Livre> _livres = [];
   List<Auteur> _auteurs = [];
+  List<Livre> _searchResults = [];
 
   @override
   void initState() {
@@ -52,6 +53,25 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  void _searchLivres(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        _searchResults = [];
+      });
+      return;
+    }
+
+    _livreServices.searchLivres(query).listen((snapshot) {
+      setState(() {
+        _searchResults = snapshot.docs.map((doc) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          data['id'] = doc.id;
+          return Livre.fromMap(data);
+        }).toList();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,11 +86,7 @@ class _HomeViewState extends State<HomeView> {
             padding: const EdgeInsets.all(3.0),
             child: TextField(
               onChanged: (query) {
-                _livreServices.searchLivres(query).listen((snapshot) {
-                  setState(() {
-                    _livres = snapshot.docs.map((doc) => Livre.fromMap(doc.data() as Map<String, dynamic>)).toList();
-                  });
-                });
+                _searchLivres(query);
               },
               decoration: const InputDecoration(
                 hintText: 'Rechercher un livre',
@@ -86,7 +102,8 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<Livre>>(
+            child: _searchResults.isEmpty
+                ? FutureBuilder<List<Livre>>(
               future: _livreServices.getLivres(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -157,6 +174,63 @@ class _HomeViewState extends State<HomeView> {
                     },
                   );
                 }
+              },
+            )
+                : GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.6,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+              ),
+              itemCount: _searchResults.length,
+              itemBuilder: (context, index) {
+                final Livre livre = _searchResults[index];
+                if (_auteurs.isEmpty) {
+                  return const Center(
+                    child: SizedBox(),
+                  );
+                }
+                final Auteur auteur = _auteurs.firstWhere((a) => a.id == livre.auteurId);
+                return GestureDetector(
+                  onTap: () {
+                    Routes.router.navigateTo(context, '/livre/${livre.id}');
+                  },
+                  child: Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Image.network(
+                            livre.couverture,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                livre.titre,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                              Text(
+                                '${auteur.prenom} ${auteur.nom}',
+                                style: const TextStyle(
+                                  fontSize: 14.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
             ),
           ),
