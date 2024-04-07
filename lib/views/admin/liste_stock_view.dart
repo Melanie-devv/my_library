@@ -61,37 +61,50 @@ class _ListeStocksViewState extends State<ListeStocksView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: _stocks.length,
-        itemBuilder: (context, index) {
-          final Stock stock = _stocks[index];
-          return ListTile(
-            title: Text(stock.adresse),
-            subtitle: Text('${stock.ville} ${stock.codePostal}'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ModifierStockView(stock: stock),
-                      ),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    _showConfirmationDialog(stock.id);
-                  },
-                ),
-              ],
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Gestion des stocks',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-          );
-        },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _stocks.length,
+              itemBuilder: (context, index) {
+                final Stock stock = _stocks[index];
+                return ListTile(
+                  title: Text(stock.adresse),
+                  subtitle: Text('${stock.ville} ${stock.codePostal}'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ModifierStockView(stock: stock),
+                            ),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          _showConfirmationDialog(stock.id);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

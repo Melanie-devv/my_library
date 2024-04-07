@@ -62,45 +62,57 @@ class _ListeAuteursViewState extends State<ListeAuteursView> {
     );
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Auteurs')),
-      body: ListView.builder(
-        itemCount: _auteurs.length,
-        itemBuilder: (context, index) {
-          final auteur = _auteurs[index];
-          return ListTile(
-            title: Text('${auteur.prenom} ${auteur.nom}'),
-            subtitle: Text(auteur.id),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ModifierAuteurView(auteur: auteur),
-                      ),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    _showConfirmationDialog(auteur.id);
-                  },
-                ),
-              ],
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Gestion des auteurs',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-          );
-        },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _auteurs.length,
+              itemBuilder: (context, index) {
+                final auteur = _auteurs[index];
+                return ListTile(
+                  title: Text('${auteur.prenom} ${auteur.nom}'),
+                  subtitle: Text(auteur.id),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ModifierAuteurView(auteur: auteur),
+                            ),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          _showConfirmationDialog(auteur.id);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
