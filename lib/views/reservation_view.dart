@@ -6,6 +6,8 @@ import 'package:my_library/services/livre_services.dart';
 import 'package:my_library/services/stock_services.dart';
 import 'package:my_library/widget/bottom_navigation_bar.dart';
 
+import '../services/reservation_services.dart';
+
 class ReservationView extends StatefulWidget {
   final String livreId;
 
@@ -42,12 +44,12 @@ class _ReservationViewState extends State<ReservationView> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(
-              'Confirmation de réservation',
-              style: TextStyle(
-                fontSize: 20,
-              ),
+            'Confirmation de réservation',
+            style: TextStyle(
+              fontSize: 20,
+            ),
           ),
-         content: Wrap(
+          content: Wrap(
             children: [
               const Center(
                 child: Text('Etes vous sur de vouloir réserver ce livre ?',),
@@ -77,9 +79,25 @@ class _ReservationViewState extends State<ReservationView> {
                 const SizedBox(width: 16),
                 TextButton(
                   child: const Text('Confirmer'),
-                  onPressed: () {
-                    // TODO: implémenter la réservation du livre et rediriger vers la page info reservation
-                    Navigator.of(context).pop();
+                  onPressed: () async {
+                    try {
+                      await ReservationServices().addReservation(_livre.id);
+                      Navigator.of(context).pop();
+                      // TODO: rediriger vers la page info reservation
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Le livre a été réservé avec succès.'),
+                          backgroundColor: Colors.green,
+                        )
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('$e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   },
                 ),
               ],
@@ -89,6 +107,7 @@ class _ReservationViewState extends State<ReservationView> {
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

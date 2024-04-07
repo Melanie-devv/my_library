@@ -19,6 +19,11 @@ class ReservationServices {
       return;
     }
 
+    final List<Reservation> reservationsEnCours = await getReservationEnCoursByUser(user.uid);
+    if (reservationsEnCours.isNotEmpty) {
+      throw Exception('Vous ne pouvez pas avoir deux réservations en même temps.');
+    }
+
     final Reservation reservation = Reservation(
       id: '',
       utilisateur: user.uid,
@@ -78,4 +83,18 @@ class ReservationServices {
       return Reservation.fromMap(data);
     }).toList();
   }
+
+  Future<List<Reservation>> getReservationEnCoursByUser(String userId) async {
+    final QuerySnapshot snapshot = await _reservations
+        .where('utilisateur', isEqualTo: userId)
+        .where('date_fin_reservation', isGreaterThan: Timestamp.fromDate(DateTime.now()))
+        .get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      return Reservation.fromMap(data);
+    }).toList();
+  }
+
 }

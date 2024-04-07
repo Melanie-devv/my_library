@@ -27,7 +27,6 @@ class Reservation {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'utilisateur': utilisateur,
       'livre': livre,
       'date_debut_reservation': dateDebutReservation,

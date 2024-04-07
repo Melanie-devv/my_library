@@ -363,7 +363,7 @@ class LivreDetailView extends StatelessWidget {
           return Text(
               'Erreur lors de la récupération du livre : ${snapshot.error}');
         }
-        return const SizedBox();
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
