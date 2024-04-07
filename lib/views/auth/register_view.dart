@@ -13,7 +13,6 @@ class _RegisterViewState extends State<RegisterView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-
   bool _isLoading = false;
 
   @override
@@ -24,65 +23,85 @@ class _RegisterViewState extends State<RegisterView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre adresse e-mail';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Adresse e-mail',
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre mot de passe';
-                  }
-                  if (value.length < 8) {
-                    return 'Le mot de passe doit contenir au moins 8 caractères';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Mot de passe',
-                ),
-              ),
-              TextFormField(
-                controller: _confirmPasswordController,
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez confirmer votre mot de passe';
-                  }
-                  if (value != _passwordController.text) {
-                    return 'Les mots de passe ne correspondent pas';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Confirmer le mot de passe',
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _register,
-                child: _isLoading ? const CircularProgressIndicator() : const Text('Inscription'),
-              ),
-            ],
-          ),
-        ),
+        child: _buildForm(),
       ),
+    );
+  }
+
+  Widget _buildForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildEmailField(),
+          const SizedBox(height: 16.0),
+          _buildPasswordField(),
+          _buildConfirmPasswordField(),
+          const SizedBox(height: 16.0),
+          _buildRegisterButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextFormField(
+      controller: _emailController,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Veuillez entrer votre adresse e-mail';
+        }
+        return null;
+      },
+      decoration: const InputDecoration(
+        labelText: 'Adresse e-mail',
+      ),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      controller: _passwordController,
+      obscureText: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Veuillez entrer votre mot de passe';
+        }
+        if (value.length < 8) {
+          return 'Le mot de passe doit contenir au moins 8 caractères';
+        }
+        return null;
+      },
+      decoration: const InputDecoration(
+        labelText: 'Mot de passe',
+      ),
+    );
+  }
+
+  Widget _buildConfirmPasswordField() {
+    return TextFormField(
+      controller: _confirmPasswordController,
+      obscureText: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Veuillez confirmer votre mot de passe';
+        }
+        if (value != _passwordController.text) {
+          return 'Les mots de passe ne correspondent pas';
+        }
+        return null;
+      },
+      decoration: const InputDecoration(
+        labelText: 'Confirmer le mot de passe',
+      ),
+    );
+  }
+
+  Widget _buildRegisterButton() {
+    return ElevatedButton(
+      onPressed: _isLoading ? null : _register,
+      child: _isLoading ? const CircularProgressIndicator() : const Text('Inscription'),
     );
   }
 

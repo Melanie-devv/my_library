@@ -48,60 +48,88 @@ class _LoginViewState extends State<LoginView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ElevatedButton(
-                onPressed: _isLoading ? null : _signInWithGoogle,
-                child: _isLoading ? const CircularProgressIndicator() : const Text('Connexion avec Google'),
-              ),
-              TextFormField(
-                controller: _emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre adresse e-mail';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Adresse e-mail',
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre mot de passe';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Mot de passe',
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _login,
-                child: _isLoading ? const CircularProgressIndicator() : const Text('Connexion'),
-              ),
-              TextButton(
-                onPressed: _isLoading ? null : _resetPassword,
-                child: const Text('Mot de passe oublié ?'),
-              ),
-              TextButton(
-                child: const Text('Vous n\'avez pas encore de compte ? Inscription'),
-                onPressed: () {
-                  Routes.router.navigateTo(context, '/register');
-                },
-              )
-            ],
-          ),
-        ),
+        child: _buildForm(),
       ),
+    );
+  }
+
+  Widget _buildForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildGoogleSignInButton(),
+          _buildEmailField(),
+          const SizedBox(height: 16.0),
+          _buildPasswordField(),
+          const SizedBox(height: 16.0),
+          _buildLoginButton(),
+          _buildResetPasswordButton(),
+          _buildRegisterButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGoogleSignInButton() {
+    return ElevatedButton(
+      onPressed: _isLoading ? null : _signInWithGoogle,
+      child: _isLoading ? const CircularProgressIndicator() : const Text('Connexion avec Google'),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextFormField(
+      controller: _emailController,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Veuillez entrer votre adresse e-mail';
+        }
+        return null;
+      },
+      decoration: const InputDecoration(
+        labelText: 'Adresse e-mail',
+      ),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      controller: _passwordController,
+      obscureText: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Veuillez entrer votre mot de passe';
+        }
+        return null;
+      },
+      decoration: const InputDecoration(
+        labelText: 'Mot de passe',
+      ),
+    );
+  }
+
+  Widget _buildLoginButton() {
+    return ElevatedButton(
+      onPressed: _isLoading ? null : _login,
+      child: _isLoading ? const CircularProgressIndicator() : const Text('Connexion'),
+    );
+  }
+
+  Widget _buildResetPasswordButton() {
+    return TextButton(
+      onPressed: _isLoading ? null : _resetPassword,
+      child: const Text('Mot de passe oublié ?'),
+    );
+  }
+
+  Widget _buildRegisterButton() {
+    return TextButton(
+      child: const Text('Vous n\'avez pas encore de compte ? Inscription'),
+      onPressed: () {
+        Routes.router.navigateTo(context, '/register');
+      },
     );
   }
 
